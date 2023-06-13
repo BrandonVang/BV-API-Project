@@ -10,7 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.hasMany(models.Spot, {
+        foreignKey: 'ownerId',
+        onDelete: 'CASCADE'
+      });
+      User.hasMany(models.Booking, {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE'
+      });
+      User.hasMany(models.Review, {
+        foreignKey: 'userId',
+        onDelete: 'CASCADE'
+      });
     }
   }
   User.init({
@@ -23,7 +34,13 @@ module.exports = (sequelize, DataTypes) => {
           if (Validator.isEmail(value)) {
             throw new Error("Cannot be an email.");
           }
-        }
+        },
+        async isUnique(username) {
+          const user = await this.constructor.findOne({ where: { username } });
+          if (user) {
+            throw new Error('User with that username already exists');
+          }
+        },
       }
     },
     firstName: {
@@ -40,7 +57,16 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         len: [3, 256],
         isEmail: true
-      }
+      },
+      validate: {
+        async isUnique(email) {
+          const user = await this.constructor.findOne({ where: { email } });
+          if (user) {
+            throw new Error('User with that email already exists');
+          }
+        },
+      },
+
     },
     hashedPassword: {
       type: DataTypes.STRING.BINARY,
@@ -55,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
     defaultScope: {
       attributes: {
         exclude: ["hashedPassword", "createdAt", "updatedAt"]
-      }
+      },
     }
   });
   return User;
