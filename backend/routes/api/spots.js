@@ -98,15 +98,22 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET all spots owned by current user
+// Get all Reviews of the Current User
 router.get('/current', requireAuth, async (req, res) => {
-    const userId = req.user.id;
-
     try {
+        // Retrieve the current user's reviews and include associated spot and user information
+        const reviews = await Review.findAll({
+            where: { userId: req.user.id },
+            include: [
+                { model: User, attributes: ['id', 'firstName', 'lastName'] },
+                { model: Spot, include: [{ model: ReviewImage, attributes: ['id', 'url'] }] }
+            ]
+        });
+
+        // Retrieve the spots owned by the current user and include average rating and preview image
+        const userId = req.user.id;
         const spots = await Spot.findAll({
-            where: {
-                ownerId: userId
-            },
+            where: { ownerId: userId },
             attributes: [
                 'id',
                 'ownerId',
@@ -134,17 +141,45 @@ router.get('/current', requireAuth, async (req, res) => {
             ],
         });
 
+        // Map spots to include the preview image URL and format dates
         const spotsWithPreviewImage = spots.map((spot) => ({
             ...spot.toJSON(),
-            createdAt: spot.createdAt.toISOString(), // Convert to desired date format
-            updatedAt: spot.updatedAt.toISOString(), // Convert to desired date format
-            previewImage: "image url",
+            createdAt: spot.createdAt.toISOString(),
+            updatedAt: spot.updatedAt.toISOString(),
+            previewImage: 'image url', // Replace 'image url' with the actual URL
         }));
 
-        res.json({ Spots: spotsWithPreviewImage });
+        // Construct the response object
+        const response = {
+            Reviews: reviews.map(review => {
+                return {
+                    id: review.id,
+                    userId: review.userId,
+                    spotId: review.spotId,
+                    review: review.review,
+                    stars: review.stars,
+                    createdAt: review.createdAt,
+                    updatedAt: review.updatedAt,
+                    User: {
+                        id: review.User.id,
+                        firstName: review.User.firstName,
+                        lastName: review.User.lastName
+                    },
+                    Spot: spotsWithPreviewImage.find(spot => spot.id === review.spotId),
+                    ReviewImages: review.Spot.ReviewImages.map(image => {
+                        return {
+                            id: image.id,
+                            url: image.url
+                        }
+                    })
+                }
+            })
+        };
+
+        return res.status(200).json(response);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+        console.error('Error retrieving reviews:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 });
 
