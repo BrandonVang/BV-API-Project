@@ -73,5 +73,19 @@ const requireAuth = function (req, _res, next) {
     return next(err);
 }
 
+// Require proper authorization
+const requireProperAuthorization = (req, res, next) => {
+    if (!req.user) {
+        return res.status(403).json({ message: "Forbidden" });
+    }
 
-module.exports = { setTokenCookie, restoreUser, requireAuth };
+    if (!req.user.hasCorrectRoleOrPermission()) {
+        return res.status(403).json({ message: "Forbidden" });
+    }
+
+    next();
+};
+
+
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, requireProperAuthorization };
