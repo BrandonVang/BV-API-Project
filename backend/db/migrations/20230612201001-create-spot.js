@@ -11,12 +11,12 @@ module.exports = {
       ownerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'User',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
+        // references: {
+        //   model: 'User',
+        //   key: 'id'
+        // },
+        // onUpdate: 'CASCADE',
+        // onDelete: 'CASCADE'
       },
       address: {
         type: Sequelize.STRING(255),
