@@ -52,9 +52,75 @@ const validateSpot = [
 
 
 // GET all spots
-router.get('/', async (req, res) => {
+router.get('/spots', async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 20;
+        const minLat = parseFloat(req.query.minLat);
+        const maxLat = parseFloat(req.query.maxLat);
+        const minLng = parseFloat(req.query.minLng);
+        const maxLng = parseFloat(req.query.maxLng);
+        const minPrice = parseFloat(req.query.minPrice);
+        const maxPrice = parseFloat(req.query.maxPrice);
+
+        // Validation
+        const errors = {};
+
+        if (page < 1 || page > 10) {
+            errors.page = 'Page must be between 1 and 10';
+        }
+
+        if (size < 1 || size > 20) {
+            errors.size = 'Size must be between 1 and 20';
+        }
+
+        if (!isNaN(minLat) && !isNaN(maxLat) && minLat > maxLat) {
+            errors.minLat = 'Minimum latitude is invalid';
+            errors.maxLat = 'Maximum latitude is invalid';
+        }
+
+        if (!isNaN(minLng) && !isNaN(maxLng) && minLng > maxLng) {
+            errors.minLng = 'Minimum latitude is invalid';
+            errors.maxLng = 'Maximum longitude is invalid';
+        }
+
+        if (!isNaN(minPrice) && minPrice < 0) {
+            errors.minPrice = 'Minimum price must be greater than or equal to 0';
+        }
+
+        if (!isNaN(maxPrice) && maxPrice < 0) {
+            errors.maxPrice = 'Maximum price must be greater than or equal to 0';
+        }
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).json({
+                message: 'Bad Request',
+                errors: errors,
+            });
+        }
+
+        const filters = {};
+
+        if (!isNaN(minLat) && !isNaN(maxLat)) {
+            filters.lat = {
+                [Op.between]: [minLat, maxLat],
+            };
+        }
+
+        if (!isNaN(minLng) && !isNaN(maxLng)) {
+            filters.lng = {
+                [Op.between]: [minLng, maxLng],
+            };
+        }
+
+        if (!isNaN(minPrice) && !isNaN(maxPrice)) {
+            filters.price = {
+                [Op.between]: [minPrice, maxPrice],
+            };
+        }
+
         const spots = await Spot.findAll({
+            where: filters,
             attributes: [
                 'id',
                 'ownerId',
@@ -81,6 +147,8 @@ router.get('/', async (req, res) => {
                 ],
             ],
             group: ['Spot.id'],
+            limit: size,
+            offset: (page - 1) * size,
         });
 
         const spotsWithPreviewImage = spots.map((spot) => ({
@@ -88,10 +156,10 @@ router.get('/', async (req, res) => {
             createdAt: spot.createdAt.toISOString(), // Convert to desired date format
             updatedAt: spot.updatedAt.toISOString(), // Convert to desired date format
             avgRating: parseFloat(spot.getDataValue('avgRating')), // Parse the average rating to a number
-            previewImage: "image url",
+            previewImage: 'image url',
         }));
 
-        res.json({ Spots: spotsWithPreviewImage });
+        res.json({ Spots: spotsWithPreviewImage, page, size });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -99,7 +167,7 @@ router.get('/', async (req, res) => {
 });
 
 // GET all spots owned by current user
-router.get('/current', requireAuth, async (req, res) => {
+router.get('/spots/current', requireAuth, async (req, res) => {
     const userId = req.user.id;
 
     try {
@@ -149,7 +217,7 @@ router.get('/current', requireAuth, async (req, res) => {
 });
 
 // Add an Image to a Spot based on the Spot's id
-router.post('/:spotId/images', async (req, res) => {
+router.post('/spots/:spotId/images', async (req, res) => {
     try {
         const spot = await Spot.findByPk(req.params.spotId);
 
@@ -182,7 +250,7 @@ router.post('/:spotId/images', async (req, res) => {
 });
 
 // GET details of a Spot from an id
-router.get('/:spotId', async (req, res) => {
+router.get('/spots/:spotId', async (req, res) => {
     try {
         const spot = await Spot.findByPk(req.params.spotId, {
             attributes: [
@@ -254,7 +322,7 @@ router.get('/:spotId', async (req, res) => {
 });
 
 //Create a Spot
-router.post('/', requireAuth, validateSpot, async (req, res) => {
+router.post('/spots', requireAuth, validateSpot, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorResponse = {
@@ -307,7 +375,7 @@ router.post('/', requireAuth, validateSpot, async (req, res) => {
 
 
 // Edit a Spot
-router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
+router.put('/spots/:spotId', requireAuth, validateSpot, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const errorResponse = {
@@ -380,7 +448,7 @@ router.put('/:spotId', requireAuth, validateSpot, async (req, res) => {
 
 
 // Delete a Spot
-router.delete('/:spotId', requireAuth, async (req, res) => {
+router.delete('/spots/:spotId', requireAuth, async (req, res) => {
     try {
         const spot = await Spot.findByPk(req.params.spotId);
 
@@ -401,5 +469,32 @@ router.delete('/:spotId', requireAuth, async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
+// Delete a Spot Image
+router.delete('/spot-images/:imageId', requireAuth, async (req, res) => {
+    try {
+        const imageId = req.params.imageId;
+        const image = await SpotImage.findByPk(imageId);
+
+        if (!image) {
+            return res.status(404).json({ message: "Spot Image couldn't be found" });
+        }
+
+        const spot = await Spot.findByPk(image.spotId);
+
+        if (!spot || spot.ownerId !== req.user.id) {
+            return res.status(403).json({ message: "You are not authorized to delete this Spot Image" });
+        }
+
+        await image.destroy();
+
+        res.status(200).json({ message: "Successfully deleted" });
+    } catch (error) {
+        console.error('Error deleting Spot Image:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 module.exports = router;

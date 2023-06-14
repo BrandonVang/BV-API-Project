@@ -310,6 +310,32 @@ router.delete('/reviews/:reviewId', requireAuth, async (req, res) => {
 });
 
 
+// Delete a Review Image
+router.delete('/review-images/:imageId', requireAuth, async (req, res) => {
+    try {
+        const imageId = req.params.imageId;
+        const image = await ReviewImage.findByPk(imageId);
+
+        if (!image) {
+            return res.status(404).json({ message: "Review Image couldn't be found" });
+        }
+
+        const review = await Review.findByPk(image.reviewId);
+
+        if (!review || review.userId !== req.user.id) {
+            return res.status(403).json({ message: "You are not authorized to delete this Review Image" });
+        }
+
+        await image.destroy();
+
+        res.status(200).json({ message: "Successfully deleted" });
+    } catch (error) {
+        console.error('Error deleting Review Image:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 // middleware/averageRating.js
 const calculateAverageRating = (req, res, next) => {
     const { reviews } = req.body;
