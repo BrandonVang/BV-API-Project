@@ -34,8 +34,8 @@ module.exports = {
         updatedAt: new Date(),
       },
     ];
-
-    await queryInterface.bulkInsert('Reviews', reviewSeedData, {});
+    options.tableName = 'Reviews'
+    await queryInterface.bulkInsert(options, reviewSeedData);
   },
 
   async down(queryInterface, Sequelize) {

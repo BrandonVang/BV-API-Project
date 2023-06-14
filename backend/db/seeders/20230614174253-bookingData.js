@@ -30,7 +30,8 @@ module.exports = {
       },
       // Add more booking data if needed
     ];
-    await queryInterface.bulkInsert('Bookings', bookingData);
+    options.tableName = 'Bookings'
+    await queryInterface.bulkInsert(options, bookingData);
   },
 
   async down(queryInterface, Sequelize) {

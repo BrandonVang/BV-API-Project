@@ -41,7 +41,8 @@ module.exports = {
       }
       // Add more spot objects as needed
     ];
-    await queryInterface.bulkInsert('Spots', spotsData, {});
+    options.tableName = 'Spots'
+    await queryInterface.bulkInsert(options, spotsData);
   },
 
   async down (queryInterface, Sequelize) {
