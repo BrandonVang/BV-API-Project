@@ -21,6 +21,6 @@ router.post('/test', (req, res) => {
 
 router.use('/spots', spotRouter);
 
-router.use('/reviews', reviewRouter);
+router.use('/', reviewRouter);
 
 module.exports = router;
