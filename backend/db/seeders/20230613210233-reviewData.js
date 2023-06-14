@@ -5,8 +5,8 @@ module.exports = {
   async up(queryInterface, Sequelize) {
 
     // Fetch the primary key values for the users and spots
-    const users = await queryInterface.sequelize.query('SELECT id FROM Users;');
-    const spots = await queryInterface.sequelize.query('SELECT id FROM Spots;');
+    const users = await queryInterface.sequelize.query('SELECT id FROM User;');
+    const spots = await queryInterface.sequelize.query('SELECT id FROM Spot;');
 
     // Use the retrieved primary key values in the review seed data
     const reviewData = [
