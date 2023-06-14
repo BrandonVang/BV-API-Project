@@ -158,7 +158,7 @@ router.post('/spots/:spotId/reviews', requireAuth, validateReview, async (req, r
             });
         }
 
-        const spotId = req.params.spotId;
+        const spotId = parseInt(req.params.spotId, 10); // Parse the spotId as an integer
         const spot = await Spot.findByPk(spotId);
 
         if (!spot) {
