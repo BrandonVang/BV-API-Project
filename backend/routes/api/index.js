@@ -21,11 +21,12 @@ router.post('/test', (req, res) => {
     res.json({ requestBody: req.body });
 });
 
-router.use('/', spotRouter);
+router.use('/spots', spotRouter);
 
-router.use('/', reviewRouter);
+router.use('/reviews', reviewRouter);
 
-router.use('/', bookingRouter);
+
+router.use('/bookings', bookingRouter);
 
 
 module.exports = router;
