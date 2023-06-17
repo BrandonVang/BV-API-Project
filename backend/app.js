@@ -56,7 +56,6 @@ const { ValidationError } = require('sequelize');
 
 // Process sequelize errors
 app.use((err, _req, _res, next) => {
-    console.log("error check", err.message)
 
     // check if error is a Sequelize error:
     if (err instanceof ValidationError) {

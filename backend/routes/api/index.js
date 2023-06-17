@@ -31,7 +31,7 @@ router.use('/bookings', bookingRouter);
 
 router.use('/spot-images', spotDelete);
 
-router.use('./review-images', reviewImageRouter)
+router.use('/review-images', reviewImageRouter)
 
 
 module.exports = router;
