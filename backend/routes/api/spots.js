@@ -625,23 +625,23 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
             createdAt: newBooking.createdAt.toISOString(),
             updatedAt: newBooking.updatedAt.toISOString(),
         });
-    } catch (error) {
-        if (error.name === 'SequelizeValidationError') {
-            const errors = error.errors.reduce((acc, curr) => {
-                acc[curr.path] = curr.message;
-                return acc;
-            }, {});
-            return res.status(400).json({
-                message: 'Validation error',
-                errors,
-            });
-        }
-        console.error('Error creating booking:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
     // } catch (error) {
-    //     throw error
+    //     if (error.name === 'SequelizeValidationError') {
+    //         const errors = error.errors.reduce((acc, curr) => {
+    //             acc[curr.path] = curr.message;
+    //             return acc;
+    //         }, {});
+    //         return res.status(400).json({
+    //             message: 'Validation error',
+    //             errors,
+    //         });
+    //     }
+    //     console.error('Error creating booking:', error);
+    //     res.status(500).json({ message: 'Internal server error' });
     // }
+    } catch (error) {
+        throw error
+    }
 })
 
 
