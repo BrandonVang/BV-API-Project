@@ -2,7 +2,7 @@
 const express = require('express')
 const { Op } = require('sequelize');
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Spot, User, Review, SpotImage, ReviewImage } = require('../../db/models');
+const { Spot, User, Review, SpotImage, ReviewImage, Booking } = require('../../db/models');
 const { check, validationResult } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 const sequelize = require('sequelize');
@@ -558,9 +558,9 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
             return res.status(404).json({ message: "Spot couldn't be found" });
         }
 
-        if (spot.ownerId === req.user.id) {
-            return res.status(403).json({ message: "You are not authorized to create a booking for your own spot" });
-        }
+        // if (spot.ownerId === req.user.id) {
+        //     return res.status(403).json({ message: "You are not authorized to create a booking for your own spot" });
+        // }
 
         const { startDate, endDate } = req.body;
 
@@ -625,23 +625,23 @@ router.post('/:spotId/bookings', requireAuth, async (req, res) => {
             createdAt: newBooking.createdAt.toISOString(),
             updatedAt: newBooking.updatedAt.toISOString(),
         });
-    // } catch (error) {
-    //     if (error.name === 'SequelizeValidationError') {
-    //         const errors = error.errors.reduce((acc, curr) => {
-    //             acc[curr.path] = curr.message;
-    //             return acc;
-    //         }, {});
-    //         return res.status(400).json({
-    //             message: 'Validation error',
-    //             errors,
-    //         });
-    //     }
-    //     console.error('Error creating booking:', error);
-    //     res.status(500).json({ message: 'Internal server error' });
-    // }
     } catch (error) {
-        throw error
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.reduce((acc, curr) => {
+                acc[curr.path] = curr.message;
+                return acc;
+            }, {});
+            return res.status(400).json({
+                message: 'Validation error',
+                errors,
+            });
+        }
+        console.error('Error creating booking:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
+    // } catch (error) {
+    //     throw error
+    // }
 })
 
 
