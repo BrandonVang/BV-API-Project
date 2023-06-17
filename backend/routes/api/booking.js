@@ -57,7 +57,7 @@ router.get('/current', requireAuth, async (req, res) => {
         });
 
         res.status(200).json({ Bookings: formattedBookings });
-    }  catch (error) {
+    } catch (error) {
         throw error
     }
 });
@@ -143,19 +143,19 @@ router.put('/:bookingId', requireAuth, async (req, res) => {
             createdAt: booking.createdAt.toISOString(),
             updatedAt: booking.updatedAt.toISOString(),
         });
-    // } catch (error) {
-    //     if (error.name === 'SequelizeValidationError') {
-    //         const errors = error.errors.reduce((acc, curr) => {
-    //             acc[curr.path] = curr.message;
-    //             return acc;
-    //         }, {});
-    //         return res.status(400).json({
-    //             message: 'Validation error',
-    //             errors,
-    //         });
-    //     }
-    //     console.error('Error updating booking:', error);
-    //     res.status(500).json({ message: 'Internal server error' });
+        // } catch (error) {
+        //     if (error.name === 'SequelizeValidationError') {
+        //         const errors = error.errors.reduce((acc, curr) => {
+        //             acc[curr.path] = curr.message;
+        //             return acc;
+        //         }, {});
+        //         return res.status(400).json({
+        //             message: 'Validation error',
+        //             errors,
+        //         });
+        //     }
+        //     console.error('Error updating booking:', error);
+        //     res.status(500).json({ message: 'Internal server error' });
     } catch (error) {
         throw error
     }
@@ -190,7 +190,6 @@ router.delete('/:bookingId', requireAuth, async (req, res) => {
     } catch (error) {
         throw error
     }
-
 });
 
 
