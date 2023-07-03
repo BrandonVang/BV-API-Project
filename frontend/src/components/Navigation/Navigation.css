@@ -5,9 +5,8 @@
 
 
 img {
-    width: 100px;
+    width: 150px;
     height: auto;
-    grid-area: img;
 }
 
 .navigation-container {
@@ -28,8 +27,9 @@ img {
 }
 
 button.profile {
-    border-radius: 20px;
-    height: 20px;
+    border-radius: 200px;
+    height: 30px;
+    width: 80px
 }
 
 .fas {
@@ -40,10 +40,22 @@ button.profile {
     position: relative;
 }
 
+.profile {
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-icon {
+    font-size: 20px;
+    margin-left: 0.5rem;
+    right: 20px;
+}
+
 
 .profile-dropdown {
     position: absolute;
-    transform: translateX(-60%);
+    transform: translateX(-55%);
     top: calc(100% + 5px);
     left: 0;
     display: flex;
@@ -53,7 +65,6 @@ button.profile {
     /* Adjust the width as needed */
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
     z-index: 1;
