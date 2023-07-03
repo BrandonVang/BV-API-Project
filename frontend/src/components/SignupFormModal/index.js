@@ -15,10 +15,22 @@ function SignupFormModal() {
     const [errors, setErrors] = useState({});
     const { closeModal } = useModal();
 
+    const isFormValid = () => {
+        return (
+            email.trim() !== "" &&
+            username.trim().length >= 4 &&
+            firstName.trim() !== "" &&
+            lastName.trim() !== "" &&
+            password.length >= 6 &&
+            password === confirmPassword
+        );
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (password === confirmPassword) {
-            setErrors({});
+        setErrors({});
+
+        if (isFormValid()) {
             return dispatch(
                 sessionActions.signup({
                     email,
@@ -36,9 +48,6 @@ function SignupFormModal() {
                     }
                 });
         }
-        return setErrors({
-            confirmPassword: "Confirm Password field must be the same as the Password field"
-        });
     };
 
     return (
@@ -104,10 +113,10 @@ function SignupFormModal() {
                         required
                     />
                 </label>
-                {errors.confirmPassword && (
-                    <p>{errors.confirmPassword}</p>
-                )}
-                <button type="submit">Sign Up</button>
+                {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
+                <button type="submit" disabled={!isFormValid()}>
+                    Sign Up
+                </button>
             </form>
         </>
     );
