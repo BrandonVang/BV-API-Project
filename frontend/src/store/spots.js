@@ -1,3 +1,5 @@
+import { csrfFetch } from "./csrf";
+
 /** Action Type Constants: */
 export const LOAD_SPOTS = 'spots/LOAD_SPOTS';
 export const RECEIVE_SPOT = 'spots/RECEIVE_SPOT';
@@ -42,10 +44,9 @@ export const createSpot = (spot) => ({
 /** Thunk Action Creators: */
 
 export const fetchSpots = () => async (dispatch) => {
-    const res = await fetch('/api/spots');
+    const res = await csrfFetch('/api/spots');
 
     if (res.ok) {
-        // const spots = await res.json();array
         const { Spots: spots } = await res.json();
         dispatch(loadSpots(spots));
     }
@@ -53,7 +54,7 @@ export const fetchSpots = () => async (dispatch) => {
 
 export const addSpotImages = (spotId, images) => async (dispatch) => {
     try {
-        const res = await fetch(`/api/spots/${spotId}/images`, {
+        const res = await csrfFetch(`/api/spots/${spotId}/images`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ images }),
@@ -71,7 +72,7 @@ export const addSpotImages = (spotId, images) => async (dispatch) => {
 };
 
 export const deleteSpot = (spotId) => async (dispatch) => {
-    const res = await fetch(`/api/spots/${spotId}`, {
+    const res = await csrfFetch(`/api/spots/${spotId}`, {
         method: 'DELETE',
     });
 
@@ -84,7 +85,7 @@ export const deleteSpot = (spotId) => async (dispatch) => {
 };
 
 export const fetchDetailedSpot = (spotId) => async (dispatch) => {
-    const res = await fetch(`/api/spots/${spotId}`);
+    const res = await csrfFetch(`/api/spots/${spotId}`);
 
     if (res.ok) {
         const spotDetails = await res.json();
@@ -96,24 +97,23 @@ export const fetchDetailedSpot = (spotId) => async (dispatch) => {
 };
 
 export const createSpots = (spot) => async (dispatch) => {
-    const res = await fetch('/api/spots', {
+    const res = await csrfFetch('/api/spots', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(spot),
     });
 
     if (res.ok) {
-        const newSpot = await res.json();
-        dispatch(receiveSpot(newSpot));
-        return newSpot;
+        const createdSpot = await res.json();
+        dispatch(receiveSpot(createdSpot));
+        return createdSpot;
     } else {
         const errors = await res.json();
         return errors;
     }
 };
-
 export const updateSpot = (spot) => async (dispatch) => {
-    const res = await fetch(`/api/spots/${spot.id}`, {
+    const res = await csrfFetch(`/api/spots/${spot.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(spot),

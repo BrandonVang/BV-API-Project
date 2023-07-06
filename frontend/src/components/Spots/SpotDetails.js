@@ -5,7 +5,7 @@ import image from '../../images/Scream.webp';
 import './SpotDetail.css'
 
 const SpotDetail = ({ match }) => {
-    const spotId = match.params.id;
+    const spotId = match.params.spotId;
     const spot = useSelector((state) => state.spots[spotId]);
 
     const dispatch = useDispatch();

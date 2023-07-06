@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { createSpots, addSpotImages } from '../../store/spots';
+import { useHistory, useParams } from 'react-router-dom';
+import { createSpots, fetchDetailedSpot } from '../../store/spots';
 import './CreateSpot.css'
 
 function CreateSpotForm() {
     const dispatch = useDispatch();
     const history = useHistory();
     const [country, setCountry] = useState('');
-    const [streetAddress, setStreetAddress] = useState('');
+    const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
-    const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
+    const [lat, setLat] = useState('');
+    const [lng, setLng] = useState('');
     const [description, setDescription] = useState('');
-    const [title, setTitle] = useState('');
+    const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [previewImage, setPreviewImage] = useState('');
     const [image1, setImage1] = useState('');
@@ -22,6 +22,15 @@ function CreateSpotForm() {
     const [image3, setImage3] = useState('');
     const [image4, setImage4] = useState('');
     const [validationErrors, setValidationErrors] = useState({});
+    const { spotId } = useParams();
+    const spot = useSelector((state) => state.spots[spotId]);
+
+    useEffect(() => {
+        if (spotId && !spot) {
+            dispatch(fetchDetailedSpot(spotId));
+        }
+    }, [dispatch, spotId, spot]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,8 +42,8 @@ function CreateSpotForm() {
             errors.country = 'Country is required';
         }
 
-        if (!streetAddress) {
-            errors.streetAddress = 'Street Address is required';
+        if (!address) {
+            errors.address = 'Street Address is required';
         }
 
         if (!city) {
@@ -49,8 +58,8 @@ function CreateSpotForm() {
             errors.description = 'Description needs to be at least 30 characters long';
         }
 
-        if (!title) {
-            errors.title = 'Name is required';
+        if (!name) {
+            errors.name = 'Name is required';
         }
 
         if (!price) {
@@ -75,22 +84,24 @@ function CreateSpotForm() {
         // Create spot object
         const spot = {
             country,
-            streetAddress,
+            address,
             city,
             state,
-            latitude,
-            longitude,
+            lat,
+            lng,
             description,
-            title,
+            name,
             price,
             images: [previewImage, image1, image2, image3, image4],
         };
 
-        // Dispatch createSpot action
-        await dispatch(createSpots(spot));
-
-        // Navigate to a new page after spot creation
-        history.push('/spots');
+        dispatch(createSpots(spot)).then((createdSpot) => {
+            if (createdSpot) {
+                dispatch(fetchDetailedSpot(createdSpot.id)).then(() => {
+                    history.push(`/spot/${createdSpot.id}`);
+                });
+            }
+        });
     };
 
     return (
@@ -116,8 +127,8 @@ function CreateSpotForm() {
                         type="text"
                         id="streetAddress"
                         className="input-street-address"
-                        value={streetAddress}
-                        onChange={(e) => setStreetAddress(e.target.value)}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
                         placeholder="Street Address"
                     />
 
@@ -150,18 +161,17 @@ function CreateSpotForm() {
                         type="text"
                         id="latitude"
                         className="input-latitude"
-                        value={latitude}
-                        onChange={(e) => setLatitude(e.target.value)}
+                        value={lat}
+                        onChange={(e) => setLat(e.target.value)}
                         placeholder="Latitude"
                     />
-
                     <label htmlFor="longitude">Longitude (optional)</label>
                     <input
                         type="text"
                         id="longitude"
                         className="input-longitude"
-                        value={longitude}
-                        onChange={(e) => setLongitude(e.target.value)}
+                        value={lng}
+                        onChange={(e) => setLng(e.target.value)}
                         placeholder="Longitude"
                     />
 
@@ -189,10 +199,11 @@ function CreateSpotForm() {
                         type="text"
                         id="title"
                         className="input-title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder='Name of your spot'
                     />
-                    {validationErrors.title && <p className="error-message">{validationErrors.title}</p>}
+                    {validationErrors.name && <p className="error-message">{validationErrors.name}</p>}
 
                     <label htmlFor="price">$</label>
                     <p>

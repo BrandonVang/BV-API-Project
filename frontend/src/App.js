@@ -21,8 +21,8 @@ function App() {
       {isLoaded && (
         <Switch>
           <Route exact path="/" component={SpotIndex} />
-          <Route path="/spots/new" component={CreateSpotForm}/>
-          <Route path="/spots/:id" component={SpotDetail} />
+          <Route exact path="/spots/new" component={CreateSpotForm}/>
+          <Route exact path="/spots/:spotId" component={SpotDetail} />
         </Switch>
 
       )}
