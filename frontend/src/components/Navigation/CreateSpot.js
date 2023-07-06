@@ -22,14 +22,7 @@ function CreateSpotForm() {
     const [image3, setImage3] = useState('');
     const [image4, setImage4] = useState('');
     const [validationErrors, setValidationErrors] = useState({});
-    const { spotId } = useParams();
-    const spot = useSelector((state) => state.spots[spotId]);
 
-    useEffect(() => {
-        if (spotId && !spot) {
-            dispatch(fetchDetailedSpot(spotId));
-        }
-    }, [dispatch, spotId, spot]);
 
 
     const handleSubmit = async (e) => {
@@ -82,7 +75,7 @@ function CreateSpotForm() {
         }
 
         // Create spot object
-        const spot = {
+        const newSpot = {
             country,
             address,
             city,
@@ -95,14 +88,16 @@ function CreateSpotForm() {
             images: [previewImage, image1, image2, image3, image4],
         };
 
-        dispatch(createSpots(spot)).then((createdSpot) => {
+        await dispatch(createSpots(newSpot)).then(async (createdSpot) => {
+
+
             if (createdSpot) {
-                dispatch(fetchDetailedSpot(createdSpot.id)).then(() => {
-                    history.push(`/spot/${createdSpot.id}`);
-                });
+                // await dispatch(fetchDetailedSpot(createdSpot.id));
+                history.push(`/spots/${createdSpot.id}`);
             }
         });
     };
+
 
     return (
         <div className="container">
@@ -122,7 +117,7 @@ function CreateSpotForm() {
                         placeholder="Country"
                     />
                     <label htmlFor="streetAddress">Street Address</label>
-                    {validationErrors.streetAddress && ( <p className="error-message">{validationErrors.streetAddress}</p>)}
+                    {validationErrors.streetAddress && (<p className="error-message">{validationErrors.streetAddress}</p>)}
                     <input
                         type="text"
                         id="streetAddress"
@@ -132,49 +127,59 @@ function CreateSpotForm() {
                         placeholder="Street Address"
                     />
 
-                    <label htmlFor="city">City</label>
-                    {validationErrors.city && <p className="error-message">{validationErrors.city}</p>}
-                    <input
-                        type="text"
-                        id="city"
-                        className="input-city"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="City"
-                    />
+                    <div className='area-container'>
+                        <div className='area'>
+                            <label htmlFor="city">City</label>
 
+                            {validationErrors.city && <p className="error-message">{validationErrors.city}</p>}
+                            <input
+                                type="text"
+                                id="city"
+                                className="input-city"
+                                value={city}
+                                onChange={(e) => setCity(e.target.value)}
+                                placeholder="City"
+                            />
 
-                    <label htmlFor="state">State</label>
-                    {validationErrors.state && <p className="error-message">{validationErrors.state}</p>}
-                    <input
-                        type="text"
-                        id="state"
-                        className="input-state"
-                        value={state}
-                        onChange={(e) => setState(e.target.value)}
-                        placeholder="State"
-                    />
+                        </div>
 
-
-                    <label htmlFor="latitude">Latitude (optional)</label>
-                    <input
-                        type="text"
-                        id="latitude"
-                        className="input-latitude"
-                        value={lat}
-                        onChange={(e) => setLat(e.target.value)}
-                        placeholder="Latitude"
-                    />
-                    <label htmlFor="longitude">Longitude (optional)</label>
-                    <input
-                        type="text"
-                        id="longitude"
-                        className="input-longitude"
-                        value={lng}
-                        onChange={(e) => setLng(e.target.value)}
-                        placeholder="Longitude"
-                    />
-
+                        <div className='st'>
+                            <label htmlFor="state">State</label>
+                            {validationErrors.state && <p className="error-message">{validationErrors.state}</p>}
+                            <input
+                                type="text"
+                                id="state"
+                                className="input-state"
+                                value={state}
+                                onChange={(e) => setState(e.target.value)}
+                                placeholder="State"
+                            />
+                        </div>
+                    </div>
+                    <div className='coord-container'>
+                        <div className='coord'>
+                            <label htmlFor="latitude">Latitude </label>
+                            <input
+                                type="text"
+                                id="latitude"
+                                className="input-latitude"
+                                value={lat}
+                                onChange={(e) => setLat(e.target.value)}
+                                placeholder="Latitude"
+                            />
+                        </div>
+                        <div className='coord2'>
+                            <label htmlFor="longitude">Longitude</label>
+                            <input
+                                type="text"
+                                id="longitude"
+                                className="input-longitude"
+                                value={lng}
+                                onChange={(e) => setLng(e.target.value)}
+                                placeholder="Longitude"
+                            />
+                        </div>
+                    </div>
                     <label htmlFor="description">Description</label>
                     <p className="writing">
                         Mention the best features of your space, any special amenities like fast WiFi or parking,
@@ -205,20 +210,28 @@ function CreateSpotForm() {
                     />
                     {validationErrors.name && <p className="error-message">{validationErrors.name}</p>}
 
-                    <label htmlFor="price">$</label>
-                    <p>
-                        Competitive pricing can help your listing stand out and rank higher in search results.
-                    </p>
-                    <input
-                        type="number"
-                        id="price"
-                        className="input-price"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="Price per night"
-                    />
-                    {validationErrors.price && <p className="error-message">{validationErrors.price}</p>}
+                    <div className='cost-container'>
+                        <h4>Set a base price for your spot</h4>
+                        <p>
+                            Competitive pricing can help your listing stand out and rank higher in search results.
+                        </p>
+                    </div>
 
+                    <div className='cost'>
+                        <label className="dollar" htmlFor="price">$</label>
+                        <input
+                            type="number"
+                            id="price"
+                            className="input-price"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            placeholder="Price per night"
+                        />
+                        {validationErrors.price && <p className="error-message">{validationErrors.price}</p>}
+                    </div>
+
+                    <h4>Liven up your spot with photos</h4>
+                    <p>Submit a link to at least one photo to publish your spot.</p>
                     <label htmlFor="previewImage">Preview Image URL</label>
                     <input
                         type="text"
@@ -274,10 +287,12 @@ function CreateSpotForm() {
                         onChange={(e) => setImage4(e.target.value)}
                         placeholder="Image URL"
                     />
+                    <div className='create-but'>
 
-                    <button type="submit" className="submit-button">
-                        Create Spot
-                    </button>
+                        <button type="submit" className="submit-button">
+                            Create Spot
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

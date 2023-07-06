@@ -4,7 +4,7 @@
     grid-template-areas: ". content .";
     justify-content: center;
     height: 100vh;
-    text-align: center;
+
 }
 
 .sub-title {
@@ -12,7 +12,62 @@
 }
 
 
-p.writings{
+
+.cost {
+    display: flex;
+    align-items: center;
+}
+
+.cost-container {
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+}
+
+
+.dollar {
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+
+.area {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+}
+
+.area-container {
+    display: flex;
+
+}
+
+
+.st {
+    margin-left: 40px;
+    width: 80px;
+}
+
+.coord-container {
+    display: flex;
+}
+
+
+.coord {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 180px;
+}
+
+.coord2 {
+    margin-left: 40px;
+    width: 180px;
+}
+
+
+p.writings {
     align-items: flex-start;
 }
 
@@ -26,6 +81,14 @@ p.writings{
 }
 
 
+.textarea-description {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    /* Prevent resizing */
+}
+
+
 
 .form {
     display: flex;
@@ -35,6 +98,8 @@ p.writings{
     max-width: 400px;
     margin-top: 1rem;
 }
+
+
 
 .form label {
     font-weight: bold;
@@ -63,6 +128,10 @@ p.writings{
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    align-items: center;
+    margin-left: 150px;
+    margin-top: 20px;
+
 }
 
 .error-message {

@@ -52,14 +52,14 @@ function ProfileButton({ user }) {
             </button>
             <div className={ulClassName} ref={ulRef}>
                 {user ? (
-                    <>
-                        <li>Hello {user.username}</li>
-                        <li>{user.email}</li>
-                        <li>Manage Spots</li>
-                        <li>
-                            <button onClick={logout}>Log Out</button>
-                        </li>
-                    </>
+                    <div className="op-container">
+                        <div>Hello, {user.username}</div>
+                        <div>{user.email}</div>
+                        <div>Manage Spots</div>
+
+                        <button onClick={logout}>Log Out</button>
+
+                    </div>
                 ) : (
                     <>
                         <div>

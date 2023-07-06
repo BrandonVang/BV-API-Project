@@ -60,14 +60,15 @@ button.profile {
     left: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    min-width: 150px;
+    align-items: center;
+    min-width: 100px;
     /* Adjust the width as needed */
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     padding: 10px;
     z-index: 1;
+
 }
 
 .profile-dropdown.hidden {
@@ -77,6 +78,7 @@ button.profile {
 .profile-dropdown li {
     margin-bottom: 5px;
     color: #333;
+
 }
 
 .profile-dropdown button {
@@ -103,3 +105,6 @@ button.profile {
 .Create {
     margin-right: 10px;
 }
+
+
+

@@ -105,13 +105,14 @@ export const createSpots = (spot) => async (dispatch) => {
 
     if (res.ok) {
         const createdSpot = await res.json();
-        dispatch(receiveSpot(createdSpot));
+        dispatch(createSpot(createdSpot));
         return createdSpot;
     } else {
         const errors = await res.json();
         return errors;
     }
 };
+
 export const updateSpot = (spot) => async (dispatch) => {
     const res = await csrfFetch(`/api/spots/${spot.id}`, {
         method: 'PUT',
@@ -161,10 +162,7 @@ const spotsReducer = (state = initialState, action) => {
             const { [action.spotId]: _, ...updatedState } = state;
             return updatedState;
         case CREATE_SPOT:
-            return {
-                ...state,
-                [action.spot.id]: action.spot,
-            };
+            return { [action.spot.id]: action.spot }
         default:
             return state;
     }
