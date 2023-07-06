@@ -29,7 +29,7 @@ const SpotDetail = ({ match }) => {
     return (
         <div className="spot-detail">
             <h2>{name}</h2>
-            <div>{city}, {state}, {country}</div>
+            <div className='location'>{city}, {state}, {country}</div>
 
             <div className="spot-images">
                 <div className="imgs">
@@ -57,6 +57,11 @@ const SpotDetail = ({ match }) => {
                     <button className="reserve" onClick={handleReserveClick}>
                         Reserve
                     </button>
+                </div>
+
+                <div className="place-review">
+                    <i className="fa fa-star"></i>
+                    {avgStarRating}
                 </div>
             </div>
         </div>

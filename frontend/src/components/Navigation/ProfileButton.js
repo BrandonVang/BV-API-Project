@@ -5,6 +5,9 @@ import * as sessionActions from '../../store/session';
 import OpenModalButton from '../OpenModalButton';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
+import CreateSpotForm from "./CreateSpot";
+import { Link } from 'react-router-dom';
+
 import './Navigation.css';
 
 function ProfileButton({ user }) {

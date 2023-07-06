@@ -14,7 +14,12 @@ function Navigation({ isLoaded }) {
                 <img className = "logo" src={AirbnbImage} alt="Home" />
             </NavLink>
 
-            {isLoaded && <ProfileButton user={sessionUser} className="profile-button" />}
+            {isLoaded && (
+                <div className='nav'>
+                    <NavLink className = "Create" to="/spots/new">Create New Spot</NavLink>
+                    <ProfileButton user={sessionUser} className="profile-button" />
+                </div>
+            )}
         </div>
     );
 }

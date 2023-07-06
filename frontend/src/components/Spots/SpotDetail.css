@@ -1,3 +1,13 @@
+h2 {
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+.location {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
 .imgs {
     display: grid;
     grid-template-columns: 700px 1fr 1fr;

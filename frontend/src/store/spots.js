@@ -3,6 +3,8 @@ export const LOAD_SPOTS = 'spots/LOAD_SPOTS';
 export const RECEIVE_SPOT = 'spots/RECEIVE_SPOT';
 export const UPDATE_SPOT = 'spots/UPDATE_SPOT';
 export const REMOVE_SPOT = 'spots/REMOVE_SPOT';
+export const ADD_SPOT_IMAGE = 'spots/ADD_SPOT_IMAGE';
+export const CREATE_SPOT = 'spots/CREATE_SPOT';
 
 /**  Action Creators: */
 export const loadSpots = (spots) => ({
@@ -24,6 +26,18 @@ export const removeSpot = (spotId) => ({
     type: REMOVE_SPOT,
     spotId,
 });
+
+export const addSpotImage = (spotId, imageUrl) => ({
+    type: ADD_SPOT_IMAGE,
+    spotId,
+    imageUrl,
+});
+
+export const createSpot = (spot) => ({
+    type: CREATE_SPOT,
+    spot,
+});
+
 
 /** Thunk Action Creators: */
 
@@ -47,19 +61,14 @@ export const addSpotImages = (spotId, images) => async (dispatch) => {
 
         if (res.ok) {
             const spotImages = await res.json();
-            // Dispatch an action to update the state with the newly added images
-            // For example: dispatch(updateSpotImages(spotId, spotImages));
-            // You can define the "updateSpotImages" action creator accordingly.
+            dispatch(addSpotImage(spotId, spotImages.imageUrl));
         } else {
-            const errors = await res.json();
-            // Handle error scenario if necessary
+            throw new Error('Failed to add spot images');
         }
     } catch (error) {
-        // Handle error scenario if necessary
         console.error('Error adding spot images:', error);
     }
 };
-
 
 export const deleteSpot = (spotId) => async (dispatch) => {
     const res = await fetch(`/api/spots/${spotId}`, {
@@ -86,7 +95,7 @@ export const fetchDetailedSpot = (spotId) => async (dispatch) => {
     }
 };
 
-export const createSpot = (spot) => async (dispatch) => {
+export const createSpots = (spot) => async (dispatch) => {
     const res = await fetch('/api/spots', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,22 +135,40 @@ const initialState = {}
 const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOAD_SPOTS:
-            const spotsState = {};
+            const loadedSpots = {};
             action.spots.forEach((spot) => {
-                spotsState[spot.id] = spot;
+                loadedSpots[spot.id] = spot;
             });
-            return spotsState;
+            return {
+                ...state,
+                ...loadedSpots,
+            };
         case RECEIVE_SPOT:
-            return { ...state, [action.spot.id]: action.spot };
         case UPDATE_SPOT:
-            return { ...state, [action.spot.id]: action.spot };
+            return {
+                ...state,
+                [action.spot.id]: action.spot,
+            };
+        case ADD_SPOT_IMAGE:
+            return {
+                ...state,
+                [action.spotId]: {
+                    ...state[action.spotId],
+                    images: [...state[action.spotId].images, action.imageUrl],
+                },
+            };
         case REMOVE_SPOT:
-            const newState = { ...state };
-            delete newState[action.spotId];
-            return newState;
+            const { [action.spotId]: _, ...updatedState } = state;
+            return updatedState;
+        case CREATE_SPOT:
+            return {
+                ...state,
+                [action.spot.id]: action.spot,
+            };
         default:
             return state;
     }
+
 };
 
 export default spotsReducer;

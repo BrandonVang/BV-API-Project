@@ -92,3 +92,14 @@ button.profile {
     color: #000;
     text-decoration: none;
 }
+
+
+.nav{
+    display: flex;
+    align-items: center;
+
+}
+
+.Create {
+    margin-right: 10px;
+}
