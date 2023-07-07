@@ -18,7 +18,7 @@ const SpotDetail = ({ match }) => {
         return <div>Loading...</div>;
     }
 
-    const { name, city, state, country, images, description, price, Owner, avgStarRating } = spot;
+    const { name, city, state, country, previewImage, description, price, Owner, avgStarRating } = spot;
     const ownerName = Owner ? `${Owner.firstName} ${Owner.lastName}` : 'Unknown';
 
 
@@ -33,7 +33,7 @@ const SpotDetail = ({ match }) => {
 
             <div className="spot-images">
                 <div className="imgs">
-                    <img src={image} className="img1" alt="Image 1" />
+                    <img src={previewImage} className="img1" alt="Image 1" />
                     <img src={image} className="img2" alt="Image 2" />
                     <img src={image} className="img3" alt="Image 3" />
                     <img src={image} className="img4" alt="Image 4" />

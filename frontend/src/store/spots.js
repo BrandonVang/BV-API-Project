@@ -8,6 +8,7 @@ export const REMOVE_SPOT = 'spots/REMOVE_SPOT';
 export const ADD_SPOT_IMAGE = 'spots/ADD_SPOT_IMAGE';
 export const CREATE_SPOT = 'spots/CREATE_SPOT';
 
+
 /**  Action Creators: */
 export const loadSpots = (spots) => ({
     type: LOAD_SPOTS,
@@ -39,6 +40,8 @@ export const createSpot = (spot) => ({
     type: CREATE_SPOT,
     spot,
 });
+
+
 
 
 /** Thunk Action Creators: */
@@ -129,6 +132,8 @@ export const updateSpot = (spot) => async (dispatch) => {
         return errors;
     }
 };
+
+
 
 const initialState = {}
 

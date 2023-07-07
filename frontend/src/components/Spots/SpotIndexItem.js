@@ -12,7 +12,7 @@ const SpotIndexItem = ({ spot }) => {
             <Link to={`/spots/${id}`} className ="detail-container">
                 <div className="spot-item">
                     <div className="spot-details">
-                        <img src={image} alt={name} className="spot-thumbnail" />
+                        <img src={previewImage} alt={name} className="spot-thumbnail" />
                         <div className="spot-info">
                             <div className="city-state">
                                 {city}, {state}

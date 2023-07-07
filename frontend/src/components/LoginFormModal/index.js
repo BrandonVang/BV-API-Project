@@ -35,7 +35,7 @@ function LoginFormModal() {
 
     const handleDemoLogin = (e) => {
         e.preventDefault();
-        setCredential("demo");
+        setCredential("Demo-lition");
         setPassword("password");
         handleSubmit(e);
     };

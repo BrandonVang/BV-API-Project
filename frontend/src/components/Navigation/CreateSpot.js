@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { createSpots, fetchDetailedSpot } from '../../store/spots';
+import { createSpots, addSpotImages } from '../../store/spots';
 import './CreateSpot.css'
 
 function CreateSpotForm() {
@@ -89,10 +89,12 @@ function CreateSpotForm() {
         };
 
         await dispatch(createSpots(newSpot)).then(async (createdSpot) => {
-
-
             if (createdSpot) {
-                // await dispatch(fetchDetailedSpot(createdSpot.id));
+                dispatch(addSpotImages(createdSpot.id, newSpot.images[0]));
+                dispatch(addSpotImages(createdSpot.id, newSpot.images[1]));
+                dispatch(addSpotImages(createdSpot.id, newSpot.images[2]));
+                dispatch(addSpotImages(createdSpot.id, newSpot.images[3]));
+                dispatch(addSpotImages(createdSpot.id, newSpot.images[4]));
                 history.push(`/spots/${createdSpot.id}`);
             }
         });

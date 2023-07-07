@@ -7,6 +7,7 @@ import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import CreateSpotForm from "./CreateSpot";
 import { Link } from 'react-router-dom';
+import { editSpots } from "../../store/spots";
 
 import './Navigation.css';
 
@@ -42,6 +43,8 @@ function ProfileButton({ user }) {
         closeMenu();
     };
 
+
+
     const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
     return (
@@ -55,8 +58,7 @@ function ProfileButton({ user }) {
                     <div className="op-container">
                         <div>Hello, {user.username}</div>
                         <div>{user.email}</div>
-                        <div>Manage Spots</div>
-
+                        <Link to="/spots/current">Manage Spots</Link>
                         <button onClick={logout}>Log Out</button>
 
                     </div>
