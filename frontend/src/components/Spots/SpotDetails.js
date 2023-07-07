@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchDetailedSpot } from '../../store/spots';
-import image from '../../images/Scream.webp';
+import image from '../../images/3.jpg';
 import './SpotDetail.css'
 
 const SpotDetail = ({ match }) => {
@@ -18,8 +18,9 @@ const SpotDetail = ({ match }) => {
         return <div>Loading...</div>;
     }
 
-    const { name, city, state, country, previewImage, description, price, Owner, avgStarRating } = spot;
+    const { name, city, state, country, SpotImages = [], description, price, Owner, avgStarRating } = spot;
     const ownerName = Owner ? `${Owner.firstName} ${Owner.lastName}` : 'Unknown';
+    const previewImage = SpotImages.length > 0 ? SpotImages[0].url : '';
 
 
     const handleReserveClick = () => {
@@ -33,7 +34,11 @@ const SpotDetail = ({ match }) => {
 
             <div className="spot-images">
                 <div className="imgs">
-                    <img src={previewImage} className="img1" alt="Image 1" />
+                    {previewImage ? (
+                        <img src={previewImage} className="img1" alt="Image 1" />
+                    ) : (
+                        <img src={image} className="img1" alt="Image 1" />
+                    )}
                     <img src={image} className="img2" alt="Image 2" />
                     <img src={image} className="img3" alt="Image 3" />
                     <img src={image} className="img4" alt="Image 4" />

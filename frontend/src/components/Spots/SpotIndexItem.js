@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import image from '../../images/Scream.webp';
+import image from '../../images/3.jpg';
 import './Spot.css'
 
 const SpotIndexItem = ({ spot }) => {
@@ -12,7 +12,13 @@ const SpotIndexItem = ({ spot }) => {
             <Link to={`/spots/${id}`} className ="detail-container">
                 <div className="spot-item">
                     <div className="spot-details">
-                        <img src={previewImage} alt={name} className="spot-thumbnail" />
+                        <div className="pics">
+                            <img
+                                src={previewImage ? previewImage : image}
+                                alt={name}
+                                className="spot-thumbnail"
+                            />
+                        </div>
                         <div className="spot-info">
                             <div className="city-state">
                                 {city}, {state}
