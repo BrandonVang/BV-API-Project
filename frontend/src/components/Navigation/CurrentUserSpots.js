@@ -16,7 +16,7 @@ const SpotManagementPage = () => {
     const userId = useSelector((state) => state.session.user?.id);
     const history = useHistory();
     const [deleteSpotId, setDeleteSpotId] = useState(null);
-   const { modalContent, setModalContent, closeModal } = useModal();
+    const { modalContent, setModalContent, closeModal } = useModal();
 
     const handleDelete = async (spotId) => {
         try {
@@ -89,8 +89,11 @@ const SpotManagementPage = () => {
                                     Update
                                 </button>
 
+
                                 <OpenModalButton
+                                    className="Del"
                                     buttonText="Delete"
+                                    buttonClassName="Del"
                                     onButtonClick={() => setDeleteSpotId(spot.id)}
                                     modalComponent={
                                         <>

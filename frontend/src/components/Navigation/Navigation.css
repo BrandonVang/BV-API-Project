@@ -13,7 +13,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid #ccc;
 }
 
 .navigation-container img {
@@ -55,14 +55,14 @@ button.profile {
 
 .profile-dropdown {
     position: absolute;
-    transform: translateX(-55%);
+    transform: translateX(-40%);
     top: calc(100% + 5px);
     left: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     min-width: 100px;
-    /* Adjust the width as needed */
+    border-radius: 10px;
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -105,6 +105,3 @@ button.profile {
 .Create {
     margin-right: 10px;
 }
-
-
-

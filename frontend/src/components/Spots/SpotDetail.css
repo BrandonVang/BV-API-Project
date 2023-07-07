@@ -22,6 +22,7 @@ h2 {
     height: 100%;
     object-fit: cover;
     border-radius: 50px;
+    border: 2px solid black;
 }
 
 .img2,
@@ -32,6 +33,7 @@ h2 {
     height: 100%;
     object-fit: cover;
     border-radius: 50px;
+    border: 2px solid black;
 }
 
 
