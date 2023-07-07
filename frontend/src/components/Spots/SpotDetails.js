@@ -35,14 +35,14 @@ const SpotDetail = ({ match }) => {
             <div className="spot-images">
                 <div className="imgs">
                     {previewImage ? (
-                        <img src={previewImage} className="img1" alt="Image 1" />
+                        <img src={previewImage} className="img1" alt="Image1" />
                     ) : (
-                        <img src={image} className="img1" alt="Image 1" />
+                        <img src={image} className="img1" alt="Image1" />
                     )}
-                    <img src={image} className="img2" alt="Image 2" />
-                    <img src={image} className="img3" alt="Image 3" />
-                    <img src={image} className="img4" alt="Image 4" />
-                    <img src={image} className="img5" alt="Image 5" />
+                    <img src={image} className="img2" alt="Image2" />
+                    <img src={image} className="img3" alt="Image3" />
+                    <img src={image} className="img4" alt="Image4" />
+                    <img src={image} className="img5" alt="Image5" />
                 </div>
             </div>
 
