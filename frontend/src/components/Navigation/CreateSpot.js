@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { createSpots, addSpotImages } from '../../store/spots';
 import './CreateSpot.css'
+import image from '../../images/3.jpg';
 
 function CreateSpotForm() {
     const dispatch = useDispatch();

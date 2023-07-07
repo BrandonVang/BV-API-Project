@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSpots } from '../../store/spots';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import './CurrentUserSpot.css'
 
 const SpotManagementPage = () => {
     const dispatch = useDispatch();
@@ -9,6 +10,7 @@ const SpotManagementPage = () => {
         useSelector((state) => (state.spots ? state.spots : []))
     );
     const userId = useSelector((state) => state.session.user?.id);
+    const history = useHistory();
 
     useEffect(() => {
         if(userId) {
@@ -31,31 +33,40 @@ const SpotManagementPage = () => {
     const userSpots = spots.filter((spot) => spot.ownerId === userId)
 
     return (
-        <div>
-            <div>
-            <h2>Manage Spots</h2>
-            <Link to="/spots/new">Create a New Spot</Link>
+        <div className = "manage-spots">
+            <div className="manage-spots">
+            <h2 className='man'>Manage Spots</h2>
+                <button className="create-button" onClick={() => history.push("/spots/new")}>
+                    Create a New Spot
+                </button>
             </div>
 
-            <ul>
+            <div className='manage-container'>
                 {userSpots.map((spot) => (
-                    <li key={spot.id}>
+                    <div key={spot.id}>
+                        <Link to={`/spots/${spot.id}`}>
+                            <div className="previews">
+                                <img src={spot.previewImage} alt="Spot Thumbnail" />
+                            </div>
+                        </Link>
                         <div>
-                            <img src={spot.previewImage} alt="Spot Thumbnail" />
-                        </div>
-                        <div>
-                            <p>Location: {spot.city}, {spot.state}, {spot.country}</p>
-                            <p>Rating: {spot.avgRating}</p>
+                            <div class="location-rating">
+                            <p>{spot.city}, {spot.state}, {spot.country}</p>
+                                <p><i className="fa fa-star"></i>{spot.avgRating}</p>
+                            </div>
+
+                            <div className='molla'>
                             <p>Price: ${spot.price}</p>
-                            <div>
-                                <button>Update</button>
-                                <button>Delete</button>
+                            </div>
+
+                            <div className="button-group">
+                                <button className='Up'>Update</button>
+                                <button className='Del'>Delete</button>
                             </div>
                         </div>
-                        <Link to={`/spot/${spot.id}`}>View Details</Link>
-                    </li>
+                    </div>
                 ))}
-            </ul>
+            </div>
 
 
         </div>

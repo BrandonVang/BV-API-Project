@@ -1,0 +1,65 @@
+.manage-spots {
+
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.create-button {
+    margin-left: 10px;
+    margin-bottom: 10px;
+    background-color: gray;
+    color: white;
+    border-radius: 5px;
+}
+
+.manage-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.manage-spots>.manage-container>div {
+    flex-basis: calc(33.33% - 10px);
+    margin-bottom: 20px;
+}
+
+.previews {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.previews img {
+    width: 90%;
+    height: 100%;
+    object-fit: cover;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+
+
+.molla {
+    margin-left: 10px;
+}
+
+
+.location-rating {
+    margin-left: 10px;
+}
+
+.button-group {
+    margin-left: 10px;
+}
+
+.Up {
+    background-color: gray;
+    color: white;
+    border-radius: 5px;
+}
+
+.Del {
+    margin-left: 10px;
+    background-color: gray;
+    color: white;
+    border-radius: 5px;
+}
