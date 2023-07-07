@@ -22,6 +22,10 @@
     align-items: center;
 }
 
+.price-box {
+    width: 2000px
+}
+
 .cost-container {
     display: flex;
     flex-direction: column;

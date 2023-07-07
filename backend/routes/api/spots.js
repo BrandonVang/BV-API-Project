@@ -22,7 +22,6 @@ const validateSpot = [
         .withMessage('State is required.'),
     check('country')
         .exists({ checkFalsy: true })
-        .isIn(['United States of America'])
         .withMessage('Country is required.'),
     check('lat')
         .exists({ checkFalsy: true })
@@ -266,6 +265,7 @@ router.get('/current', requireAuth, async (req, res) => {
     }
 });
 
+
 // Add an Image to a Spot based on the Spot's id
 router.post('/:spotId/images', async (req, res) => {
     try {
@@ -399,7 +399,6 @@ router.post('/', requireAuth, validateSpot, async (req, res) => {
             price: req.body.price,
         });
 
-        await setTokenCookie(res, spot);
 
         return res.status(201).json({
             id: spot.id,

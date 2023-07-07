@@ -51,9 +51,6 @@ module.exports = (sequelize, DataTypes) => {
       country: {
         type: DataTypes.STRING(100),
         allowNull: false,
-        validate: {
-          isIn: [['United States of America']],
-        },
       },
       lat: {
         type: DataTypes.DECIMAL(9, 6),

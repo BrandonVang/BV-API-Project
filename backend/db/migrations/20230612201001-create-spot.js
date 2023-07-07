@@ -34,9 +34,6 @@ module.exports = {
       country: {
         type: Sequelize.STRING(100),
         allowNull: false,
-        validate: {
-          isIn: [['USA']]
-        }
       },
       lat: {
         type: Sequelize.DECIMAL(9, 6),

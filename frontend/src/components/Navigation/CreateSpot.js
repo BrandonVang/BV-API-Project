@@ -69,6 +69,14 @@ function CreateSpotForm() {
             errors.image1 = 'Image URL must end in .png, .jpg, or .jpeg'
         }
 
+        if (!lng) {
+            errors.lng = 'Longitude is required'
+        }
+
+        if (!lat) {
+            errors.lat = 'Latitude is required'
+        }
+
         setValidationErrors(errors);
 
         // Check if there are any validation errors
@@ -90,19 +98,17 @@ function CreateSpotForm() {
             images: [previewImage, image1, image2, image3, image4],
         };
 
-        await dispatch(createSpots(newSpot)).then(async (createdSpot) => {
-            if (createdSpot) {
-                await dispatch(restoreUser());
-                dispatch(addSpotImages(createdSpot.id, newSpot.images[0]));
-                dispatch(addSpotImages(createdSpot.id, newSpot.images[1]));
-                dispatch(addSpotImages(createdSpot.id, newSpot.images[2]));
-                dispatch(addSpotImages(createdSpot.id, newSpot.images[3]));
-                dispatch(addSpotImages(createdSpot.id, newSpot.images[4]));
-                history.push(`/spots/${createdSpot.id}`);
-            }
-        });
-    };
+        const createdSpot = await dispatch(createSpots(newSpot));
 
+        if (createdSpot) {
+            newSpot.images.forEach((imageUrl) => {
+                dispatch(addSpotImages(createdSpot.id, imageUrl));
+            });
+
+            await dispatch(restoreUser());
+            history.push(`/spots/${createdSpot.id}`);
+        }
+    };
 
     return (
         <div className="container">
@@ -122,7 +128,7 @@ function CreateSpotForm() {
                         placeholder="Country"
                     />
                     <label htmlFor="streetAddress">Street Address</label>
-                    {validationErrors.streetAddress && (<p className="error-message">{validationErrors.streetAddress}</p>)}
+                    {validationErrors.address && (<p className="error-message">{validationErrors.address}</p>)}
                     <input
                         type="text"
                         id="streetAddress"
@@ -150,6 +156,7 @@ function CreateSpotForm() {
 
                         <div className='st'>
                             <label htmlFor="state">State</label>
+
                             {validationErrors.state && <p className="error-message">{validationErrors.state}</p>}
                             <input
                                 type="text"
@@ -164,6 +171,7 @@ function CreateSpotForm() {
                     <div className='coord-container'>
                         <div className='coord'>
                             <label htmlFor="latitude">Latitude </label>
+                            {validationErrors.lat && <p className="error-message">{validationErrors.lat}</p>}
                             <input
                                 type="text"
                                 id="latitude"
@@ -175,6 +183,7 @@ function CreateSpotForm() {
                         </div>
                         <div className='coord2'>
                             <label htmlFor="longitude">Longitude</label>
+                            {validationErrors.lng && <p className="error-message">{validationErrors.lng}</p>}
                             <input
                                 type="text"
                                 id="longitude"
@@ -227,13 +236,13 @@ function CreateSpotForm() {
                         <input
                             type="number"
                             id="price"
-                            className="input-price"
+                            className="price-box"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
                             placeholder="Price per night"
                         />
-                        {validationErrors.price && <p className="error-message">{validationErrors.price}</p>}
                     </div>
+                    {validationErrors.price && <p className="error-message">{validationErrors.price}</p>}
 
                     <h4>Liven up your spot with photos</h4>
                     <p>Submit a link to at least one photo to publish your spot.</p>
