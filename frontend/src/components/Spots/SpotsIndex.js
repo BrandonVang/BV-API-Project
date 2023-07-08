@@ -7,10 +7,8 @@ import './Spot.css'
 
 
 const SpotIndex = () => {
-    const spots = Object.values(
-        useSelector((state) => (state.spots ? state.spots : []))
-    );
-
+    const spotsObj = useSelector((state) => state.spots.allSpots)
+    const spots = Object.values(spotsObj );
 
     const dispatch = useDispatch();
 

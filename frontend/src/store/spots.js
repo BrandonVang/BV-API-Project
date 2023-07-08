@@ -30,10 +30,10 @@ export const removeSpot = (spotId) => ({
     spotId,
 });
 
-export const addSpotImage = (spotId, imageUrl) => ({
+export const addSpotImage = (spotId, url) => ({
     type: ADD_SPOT_IMAGE,
     spotId,
-    imageUrl,
+    SpotImages: url
 });
 
 export const createSpot = (spot) => ({
@@ -55,24 +55,34 @@ export const fetchSpots = () => async (dispatch) => {
     }
 };
 
-export const addSpotImages = (spotId, images) => async (dispatch) => {
+export const addSpotImages = (spotId, url) => async (dispatch) => {
     try {
         const res = await csrfFetch(`/api/spots/${spotId}/images`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ images }),
+            body: JSON.stringify({ url }),
         });
 
         if (res.ok) {
-            const spotImages = await res.json();
-            dispatch(addSpotImage(spotId, spotImages.imageUrl));
+            const { imageUrl } = await res.json();
+
+            // Dispatch the action to add the image to the spot
+            dispatch({
+                type: ADD_SPOT_IMAGE,
+                spotId,
+                url: imageUrl,
+            });
         } else {
-            throw new Error('Failed to add spot images');
+            throw new Error('Failed to add spot image');
         }
     } catch (error) {
-        console.error('Error adding spot images:', error);
+        console.error('Error adding spot image:', error);
     }
 };
+
+
+
+
 
 export const deleteSpot = (spotId) => async (dispatch) => {
     const res = await csrfFetch(`/api/spots/${spotId}`, {
@@ -108,13 +118,30 @@ export const createSpots = (newSpot) => async (dispatch) => {
 
     if (res.ok) {
         const createdSpot = await res.json();
+
+        // Prepare the image URLs array
+        const images = [newSpot.previewImage, newSpot.image1, newSpot.image2, newSpot.image3, newSpot.image4];
+        const validImages = images.filter((url) => url !== null);
+
+        // Create the SpotImages array
+        const spotImages = validImages.map((url, index) => ({
+            id: null,
+            url,
+            preview: !!url, // Set preview to true if there's a URL
+        }));
+
+        // Update the createdSpot object with the SpotImages array
+        createdSpot.SpotImages = spotImages;
+
         dispatch(createSpot(createdSpot));
+
         return createdSpot;
     } else {
         const errors = await res.json();
         return errors;
     }
 };
+
 
 export const updateSpot = (spot) => async (dispatch) => {
     const res = await csrfFetch(`/api/spots/${spot.id}`, {
@@ -135,39 +162,51 @@ export const updateSpot = (spot) => async (dispatch) => {
 
 
 
-const initialState = {}
+const initialState = {
+    allSpots: {
+
+    },
+
+    singleSpot: {
+
+    }
+}
 
 /** The spots reducer */
 const spotsReducer = (state = initialState, action) => {
     switch (action.type) {
-        case LOAD_SPOTS:
-            const loadedSpots = {};
+        case LOAD_SPOTS: {
+
+            const newState = { ...state, allSpots: {} };
             action.spots.forEach((spot) => {
-                loadedSpots[spot.id] = spot;
+                newState.allSpots[spot.id] = spot;
             });
+            return newState
+        };
+
+        case RECEIVE_SPOT: {
+            const { spot } = action;
             return {
                 ...state,
-                ...loadedSpots,
-            };
-        case RECEIVE_SPOT:
-        case UPDATE_SPOT:
-            return {
-                ...state,
-                [action.spot.id]: action.spot,
-            };
-        case ADD_SPOT_IMAGE:
-            return {
-                ...state,
-                [action.spotId]: {
-                    ...state[action.spotId],
-                    images: [...state[action.spotId].images, action.imageUrl],
+                singleSpot: {
+                    ...state.singleSpot,
+                    ...spot,
+                    SpotImages: spot.SpotImages || [], // Make sure SpotImages is an array
                 },
             };
+        }
+        case UPDATE_SPOT: {
+            return { ...state, singleSpot: action.spot }
+        }
         case REMOVE_SPOT:
-            const { [action.spotId]: _, ...updatedState } = state;
-            return updatedState;
+            const { [action.spotId]: _, ...updatedAllSpots } = state.allSpots;
+            return {
+                ...state,
+                allSpots: updatedAllSpots,
+                singleSpot: {},
+            };
         case CREATE_SPOT:
-            return { [action.spot.id]: action.spot }
+            return { ...state, singleSpot: action.spot }
         default:
             return state;
     }

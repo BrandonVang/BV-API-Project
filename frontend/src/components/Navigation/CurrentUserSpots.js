@@ -11,7 +11,7 @@ import './CurrentUserSpot.css'
 const SpotManagementPage = () => {
     const dispatch = useDispatch();
     const spots = Object.values(
-        useSelector((state) => (state.spots ? state.spots : []))
+        useSelector((state) => state.spots.allSpots)
     );
     const userId = useSelector((state) => state.session.user?.id);
     const history = useHistory();

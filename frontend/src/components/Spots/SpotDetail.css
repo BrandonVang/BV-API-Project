@@ -25,6 +25,8 @@ h2 {
     border: 2px solid black;
 }
 
+
+.custom-img,
 .img2,
 .img3,
 .img4,
@@ -64,7 +66,8 @@ h2 {
     margin-top: 10px;
 
 }
-.review{
+
+.review {
     margin-left: 190px;
     margin-right: 10px;
 }

@@ -25,6 +25,14 @@ function CreateSpotForm() {
     const [image4, setImage4] = useState('');
     const [validationErrors, setValidationErrors] = useState({});
 
+    const isValidUrl = (url) => {
+        try {
+            new URL(url);
+            return true;
+        } catch (error) {
+            return false;
+        }
+    };
 
 
     const handleSubmit = async (e) => {
@@ -61,12 +69,14 @@ function CreateSpotForm() {
             errors.price = 'Price is required';
         }
 
-        if (!previewImage) {
-            errors.previewImage = 'Preview Image is required';
-        }
-
-        if (!image1) {
-            errors.image1 = 'Image URL must end in .png, .jpg, or .jpeg'
+        if (!isValidUrl(previewImage)) {
+            errors.previewImage = 'Preview Image URL is required';
+        } else if (
+            !previewImage.endsWith(".jpg") &&
+            !previewImage.endsWith(".jpeg") &&
+            !previewImage.endsWith(".png")
+        ) {
+            errors.previewImage = 'Preview Image URL must end in .png, .jpg, or .jpeg';
         }
 
         if (!lng) {
@@ -77,6 +87,7 @@ function CreateSpotForm() {
             errors.lat = 'Latitude is required'
         }
 
+
         setValidationErrors(errors);
 
         // Check if there are any validation errors
@@ -86,24 +97,33 @@ function CreateSpotForm() {
 
         // Create spot object
         const newSpot = {
-            country,
             address,
             city,
             state,
+            country,
             lat,
             lng,
-            description,
             name,
+            description,
             price,
-            images: [previewImage, image1, image2, image3, image4],
         };
+
+        const images = [previewImage, image1, image2, image3, image4];
+        const validImages = images.filter((url) => isValidUrl(url));
+
+        if (validImages.length === 0) {
+            // At least one valid image URL is required
+            setValidationErrors({ images: 'Please provide at least one valid image URL' });
+            return;
+        }
 
         const createdSpot = await dispatch(createSpots(newSpot));
 
         if (createdSpot) {
-            newSpot.images.forEach((imageUrl) => {
-                dispatch(addSpotImages(createdSpot.id, imageUrl));
-            });
+            for (let i = 0; i < validImages.length; i++) {
+                const url = validImages[i];
+                await dispatch(addSpotImages(createdSpot.id, url));
+            }
 
             await dispatch(restoreUser());
             history.push(`/spots/${createdSpot.id}`);
@@ -248,7 +268,7 @@ function CreateSpotForm() {
                     <p>Submit a link to at least one photo to publish your spot.</p>
                     <label htmlFor="previewImage">Preview Image URL</label>
                     <input
-                        type="text"
+                        type="url"
                         id="previewImage"
                         className="input-preview-image"
                         value={previewImage}
@@ -261,7 +281,7 @@ function CreateSpotForm() {
 
                     <label htmlFor="image1">Image URL</label>
                     <input
-                        type="text"
+                        type="url"
                         id="image1"
                         className="input-image1"
                         value={image1}
@@ -274,7 +294,7 @@ function CreateSpotForm() {
 
                     <label htmlFor="image2">Image URL</label>
                     <input
-                        type="text"
+                        type="url"
                         id="image2"
                         className="input-image2"
                         value={image2}
@@ -284,7 +304,7 @@ function CreateSpotForm() {
 
                     <label htmlFor="image3">Image URL</label>
                     <input
-                        type="text"
+                        type="url"
                         id="image3"
                         className="input-image3"
                         value={image3}
@@ -294,7 +314,7 @@ function CreateSpotForm() {
 
                     <label htmlFor="image4">Image URL</label>
                     <input
-                        type="text"
+                        type="url"
                         id="image4"
                         className="input-image4"
                         value={image4}
