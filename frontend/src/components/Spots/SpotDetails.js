@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchDetailedSpot } from '../../store/spots';
 import image from '../../images/3.jpg';
 import './SpotDetail.css';
+import ReviewDetails from '../Reviews/ReviewDetails';
 
 const SpotDetail = ({ match }) => {
     const spotId = match.params.spotId;
@@ -19,6 +20,9 @@ const SpotDetail = ({ match }) => {
 
     const { name, city, state, country, SpotImages = [], description, price, Owner, avgStarRating } = spot;
     const ownerName = Owner ? `${Owner.firstName} ${Owner.lastName}` : 'Unknown';
+    const formattedRating = spot.avgStarRating !== undefined && spot.avgStarRating !== null && spot.avgStarRating !== 0
+        ? spot.avgStarRating
+        : 'New';
 
     let previewImage;
     let renderedImages = [];
@@ -53,55 +57,23 @@ const SpotDetail = ({ match }) => {
 
             <div className="spot-images">
                 <div className="imgs">
-                    {previewImage ? (
+                    {previewImage && (
                         <>
                             <img src={previewImage} className="img1" alt="Image1" />
                             {renderedImages.length > 0 ? (
-                                <>
-                                    {renderedImages.map((image, index) => (
-                                        <img
-                                            key={`rendered-${index}`}
-                                            src={image.props.src}
-                                            className={`img${index + 2} img`}
-                                            alt={`Image${index + 2}`}
-                                        />
-                                    ))}
-                                    {renderedImages.length < 2 && (
-                                        <img src={image} className="img2 img" alt="Image2" />
-                                    )}
-                                </>
+                                renderedImages.map((image, index) => (
+                                    <img
+                                        key={`rendered-${index}`}
+                                        src={image.props.src}
+                                        className={`img${index + 2} img`}
+                                        alt={`Image${index + 2}`}
+                                    />
+                                ))
                             ) : (
                                 <>
-                                    <img src={image} className="img3 img" alt="Image3" />
-                                    <img src={image} className="img2 img" alt="Image2" />
-                                    <img src={image} className="img4 img" alt="Image4" />
-                                    <img src={image} className="img5 img" alt="Image5" />
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            {renderedImages.length > 0 ? (
-                                <>
-                                    <img src={renderedImages[0].props.src} className="img1" alt="Image1" />
-                                    {renderedImages.slice(1).map((image, index) => (
-                                        <img
-                                            key={`rendered-${index}`}
-                                            src={image.props.src}
-                                            className={`img${index + 2} img`}
-                                            alt={`Image${index + 2}`}
-                                        />
+                                    {[...Array(4)].map((_, index) => (
+                                        <img src={image} className={`img${index + 2} img`} alt={`Image${index + 2}`} />
                                     ))}
-                                    {renderedImages.length < 2 && (
-                                        <img src={image} className="img2 img" alt="Image2" />
-                                    )}
-                                </>
-                            ) : (
-                                <>
-                                    <img src={image} className="img2 img" alt="Image2" />
-                                    <img src={image} className="img3 img" alt="Image3" />
-                                    <img src={image} className="img4 img" alt="Image4" />
-                                    <img src={image} className="img5 img" alt="Image5" />
                                 </>
                             )}
                         </>
@@ -119,7 +91,7 @@ const SpotDetail = ({ match }) => {
                         {price} night
                         <div className="review">
                             <i className="fa fa-star"></i>
-                            {avgStarRating}
+                            {formattedRating}
                         </div>
                     </div>
                     <button className="reserve" onClick={handleReserveClick}>
@@ -129,8 +101,12 @@ const SpotDetail = ({ match }) => {
 
                 <div className="place-review">
                     <i className="fa fa-star"></i>
-                    {avgStarRating}
+                    {formattedRating}
+                    <div>
+                        <ReviewDetails />
+                    </div>
                 </div>
+
             </div>
         </div>
     );

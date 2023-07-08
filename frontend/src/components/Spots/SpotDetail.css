@@ -52,6 +52,7 @@ h2 {
 }
 
 .info-row2 {
+
     margin-top: 10px;
     display: flex;
     flex-direction: column;
@@ -85,4 +86,18 @@ button.reserve {
     margin-bottom: 20px;
     margin-right: 20px;
     margin-left: 20px;
+}
+
+
+/* reviews */
+
+
+.place-review{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    grid-column: 1 / span 3;
+    font-size: xx-large;
+    font-style: bold;
+    border-top: solid;
+    width: 1890px
 }
