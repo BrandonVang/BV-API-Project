@@ -18,6 +18,9 @@ const SpotDetail = ({ match }) => {
     const user = useSelector((state) => state.session.user);
     const [deleteSpotId, setDeleteSpotId] = useState(null);
     const { closeModal } = useModal();
+    const [isLoading, setIsLoading] = useState(true);
+    const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+
 
     const handleCancel = () => {
         closeModal();
@@ -34,9 +37,34 @@ const SpotDetail = ({ match }) => {
     };
 
     useEffect(() => {
-        dispatch(fetchDetailedSpot(spotId));
+        setIsLoading(true); // Set loading state to true before fetching data
+        dispatch(fetchDetailedSpot(spotId))
+            .then(() => setIsLoading(false)) // Set loading state to false once data is fetched
+            .catch((error) => {
+                console.error("Error fetching spot details:", error);
+                setIsLoading(false); // Set loading state to false in case of an error
+            });
         dispatch(fetchReviews(spotId));
     }, [dispatch, spotId]);
+
+    useEffect(() => {
+        // Preload the images in the background
+        const imageUrls = spot?.SpotImages?.map((image) => image.url) || [];
+        const imagesToLoad = imageUrls.filter((url) => url !== null);
+
+        const imagePromises = imagesToLoad.map((imageUrl) => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = imageUrl;
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+        });
+
+        Promise.all(imagePromises)
+            .then(() => setIsImagesLoaded(true))
+            .catch((error) => console.error("Error preloading images:", error));
+    }, [spot?.SpotImages]);
 
     if (!spot || !spot.SpotImages) {
         return <div>Loading...</div>;
@@ -81,7 +109,11 @@ const SpotDetail = ({ match }) => {
                 <div className="imgs">
                     {previewImage && (
                         <>
-                            <img src={previewImage} className="img1" alt="Image1" />
+                            {isLoading ? (
+                                <div></div>
+                            ) : (
+                                <img src={previewImage} className="img1" alt="Image1" />
+                            )}
                             {renderedImages.length > 0 ? (
                                 renderedImages.map((image, index) => (
                                     <img
