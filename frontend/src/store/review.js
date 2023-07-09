@@ -8,14 +8,16 @@ export const UPDATE_REVIEW = 'reviews/UPDATE_REVIEW';
 export const DELETE_REVIEW = 'reviews/DELETE_REVIEW';
 
 // Action Creators
-export const loadReviews = (reviews, spotId) => ({
+export const loadReviews = (spotId, review) => ({
     type: LOAD_REVIEWS,
-    reviews,
     spotId,
+    review,
 });
-export const createReview = (review) => ({
+
+export const createReview = (review, spotId) => ({
     type: CREATE_REVIEW,
     review,
+    spotId,
 });
 
 export const updateReview = (review) => ({
@@ -30,17 +32,17 @@ export const deleteReview = (reviewId) => ({
 
 
 //thunks
-export const fetchReviews = () => async (dispatch) => {
-    const res = await csrfFetch('/api/reviews');
+export const fetchReviews = (spotId) => async (dispatch) => {
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`);
 
     if (res.ok) {
-        const { reviews } = await res.json();
-        dispatch(loadReviews(reviews));
+        const { Reviews: reviews } = await res.json();
+        dispatch(loadReviews(spotId, reviews));
     }
 };
 
-export const createReviews = (reviewData) => async (dispatch) => {
-    const res = await csrfFetch('/api/reviews', {
+export const createReviews = (reviewData, spotId) => async (dispatch) => {
+    const res = await csrfFetch(`/api/spots/${spotId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reviewData),
@@ -79,8 +81,12 @@ export const deleteReviews = (reviewId) => async (dispatch) => {
 
 // Initial state
 const initialState = {
-    spot: {},
-    user: {},
+    spot: {
+
+    },
+    user: {
+
+    },
 };
 
 
@@ -88,42 +94,56 @@ const initialState = {
 const reviewReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOAD_REVIEWS: {
-            const { reviews } = action;
-            const nextState = { ...state };
-            reviews.forEach((review) => {
-                if (review.SpotId) {
-                    nextState.spot[review.id] = review;
-                } else if (review.UserId) {
-                    nextState.user[review.id] = review;
-                }
-            });
-            return nextState;
+            const newState = { ...state, spot: {} }
+            action.review.forEach((review) => {
+                newState.spot[review.id] = review
+            })
+
+            return newState;
         }
         case CREATE_REVIEW:
+            const { review } = action;
+
+            return {
+                ...state,
+                spot: {
+                    ...state.spot,
+                    [review.id]: review,
+                },
+                user: {
+                    ...state.user,
+                    [review.id]: review,
+                },
+
+            };
         case UPDATE_REVIEW: {
             const { review } = action;
-            const nextState = { ...state };
-            if (review.SpotId) {
-                nextState.spot[review.id] = review;
-            } else if (review.UserId) {
-                nextState.user[review.id] = review;
-            }
+            const nextState = {
+                ...state,
+                spot: {
+                    ...state.spot,
+                    [review.spotId]: [
+                        ...(state.spot[review.spotId] || []),
+                        review,
+                    ],
+                },
+            };
             return nextState;
         }
         case DELETE_REVIEW: {
             const { reviewId } = action;
-            const nextState = { ...state };
-            Object.keys(nextState.spot).forEach((reviewId) => {
-                if (nextState.spot[reviewId].id === reviewId) {
-                    delete nextState.spot[reviewId];
-                }
-            });
-            Object.keys(nextState.user).forEach((reviewId) => {
-                if (nextState.user[reviewId].id === reviewId) {
-                    delete nextState.user[reviewId];
-                }
-            });
-            return nextState;
+
+            const newSpotReviews = { ...state.spot };
+            delete newSpotReviews[reviewId];
+
+            const newUserReviews = { ...state.user };
+            delete newUserReviews[reviewId];
+
+            return {
+                ...state,
+                spot: newSpotReviews,
+                user: newUserReviews,
+            };
         }
         default:
             return state;

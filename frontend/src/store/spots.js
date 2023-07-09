@@ -1,4 +1,5 @@
 import { csrfFetch } from "./csrf";
+import { fetchReviews } from "./review";
 
 /** Action Type Constants: */
 export const LOAD_SPOTS = 'spots/LOAD_SPOTS';
@@ -103,6 +104,7 @@ export const fetchDetailedSpot = (spotId) => async (dispatch) => {
     if (res.ok) {
         const spotDetails = await res.json();
         dispatch(receiveSpot(spotDetails));
+        dispatch(fetchReviews(spotDetails.id)); // Fetch reviews for the spot using spot.id
     } else {
         const errors = await res.json();
         return errors;

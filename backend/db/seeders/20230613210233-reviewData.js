@@ -28,11 +28,67 @@ module.exports = {
       {
         userId: 1,
         spotId: 2,
+        review: "Great experience. Highly recommended!",
+        stars: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        spotId: 2,
         review: "Not the best spot, but it was decent.",
         stars: 3,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        userId: 1,
+        spotId: 3,
+        review: "Not the best spot, but it was decent.",
+        stars: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        spotId: 3,
+        review: "Not the best spot, but it was decent.",
+        stars: 3,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 1,
+        spotId: 4,
+        review: "Great experience. Highly recommended!",
+        stars: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        spotId: 4,
+        review: "Great experience. Highly recommended!",
+        stars: 4,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 1,
+        spotId: 5,
+        review: "Great experience. Highly recommended!",
+        stars: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        userId: 2,
+        spotId: 5,
+        review: "Great experience. Highly recommended!",
+        stars: 5,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
     ];
     options.tableName = 'Reviews'
     await queryInterface.bulkInsert(options, reviewSeedData);

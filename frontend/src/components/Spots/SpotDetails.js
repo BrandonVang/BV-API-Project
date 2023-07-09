@@ -1,24 +1,48 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchDetailedSpot } from '../../store/spots';
+import { fetchReviews, deleteReviews } from '../../store/review';
+import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import OpenModalButton from '../OpenModalButton';
 import image from '../../images/3.jpg';
-import './SpotDetail.css';
+import { useModal } from "../../context/Modal";
 import ReviewDetails from '../Reviews/ReviewDetails';
+import './SpotDetail.css';
 
 const SpotDetail = ({ match }) => {
     const spotId = match.params.spotId;
     const spot = useSelector((state) => state.spots.singleSpot);
     const dispatch = useDispatch();
+    const reviews = useSelector((state) => state.reviews.spot);
+    const userId = useSelector((state) => state.session.user?.id);
+    const user = useSelector((state) => state.session.user);
+    const [deleteSpotId, setDeleteSpotId] = useState(null);
+    const { closeModal } = useModal();
+
+    const handleCancel = () => {
+        closeModal();
+    };
+
+    const handleDelete = async (reviewId) => {
+        try {
+            await dispatch(deleteReviews(parseInt(reviewId)));
+            setDeleteSpotId(null);
+            closeModal();
+        } catch (error) {
+            console.error("Error deleting spot:", error);
+        }
+    };
 
     useEffect(() => {
         dispatch(fetchDetailedSpot(spotId));
+        dispatch(fetchReviews(spotId));
     }, [dispatch, spotId]);
 
     if (!spot || !spot.SpotImages) {
         return <div>Loading...</div>;
     }
 
-    const { name, city, state, country, SpotImages = [], description, price, Owner, avgStarRating } = spot;
+    const { name, city, state, country, SpotImages = [], description, price, Owner, avgStarRating, numReviews, ownerId } = spot;
     const ownerName = Owner ? `${Owner.firstName} ${Owner.lastName}` : 'Unknown';
     const formattedRating = spot.avgStarRating !== undefined && spot.avgStarRating !== null && spot.avgStarRating !== 0
         ? spot.avgStarRating
@@ -26,7 +50,6 @@ const SpotDetail = ({ match }) => {
 
     let previewImage;
     let renderedImages = [];
-
 
     if (SpotImages.length > 0) {
         previewImage = SpotImages[0].url;
@@ -42,7 +65,6 @@ const SpotDetail = ({ match }) => {
             ];
         }
     }
-
 
     const handleReserveClick = () => {
         alert('Feature coming soon');
@@ -72,7 +94,12 @@ const SpotDetail = ({ match }) => {
                             ) : (
                                 <>
                                     {[...Array(4)].map((_, index) => (
-                                        <img src={image} className={`img${index + 2} img`} alt={`Image${index + 2}`} />
+                                        <img
+                                            key={`placeholder-${index}`}
+                                            src={image}
+                                            className={`img${index + 2} img`}
+                                            alt={`Image${index + 2}`}
+                                        />
                                     ))}
                                 </>
                             )}
@@ -88,10 +115,13 @@ const SpotDetail = ({ match }) => {
                 </div>
                 <div className="info-row2">
                     <div className="price">
-                        {price} night
+                        <div className='amount'>
+                            $ {price} night
+
+                        </div>
                         <div className="review">
                             <i className="fa fa-star"></i>
-                            {formattedRating}
+                            {formattedRating} {numReviews !== 0 && `· ${numReviews} ${numReviews === 1 && 0 ? "Review" : "Reviews"}`}
                         </div>
                     </div>
                     <button className="reserve" onClick={handleReserveClick}>
@@ -101,15 +131,69 @@ const SpotDetail = ({ match }) => {
 
                 <div className="place-review">
                     <i className="fa fa-star"></i>
-                    {formattedRating}
+                    {formattedRating} {numReviews !== 0 && `· ${numReviews} ${numReviews === 1 && 0 ? "Review" : "Reviews"}`}
+
                     <div>
-                        <ReviewDetails />
+                        {user !== null && (
+                            <>
+                                {user !== null && userId !== ownerId && !Object.values(reviews).find(review => review.userId === userId) && (
+                                    <OpenModalMenuItem
+                                        itemText="Post Your Review"
+                                        className="custom-menu-item"
+                                        modalComponent={<ReviewDetails spotId={spotId} />}
+                                    />
+                                )}
+                            </>
+                        )}
+                        <div className="reviews-list">
+                            {Object.values(reviews).length === 0 && userId !== undefined && ownerId !== undefined && userId !== ownerId ? (
+                                <p className="no-reviews-text">Be the first to post a review!</p>
+                            ) : (
+                                Object.values(reviews).map((review, index) => {
+                                    const reviewDate = review.createdAt ? new Date(review.createdAt) : null;
+                                    const monthYear = reviewDate ? reviewDate.toLocaleString('en-US', {
+                                        month: 'long',
+                                        year: 'numeric',
+                                    }) : '';
+
+                                    return (
+                                        <div key={`${review.id}-${index}`} className="review-item">
+                                            <p>{review?.User?.firstName} {review?.User?.lastName}</p>
+                                            <p className="review-date">{monthYear}</p>
+                                            <p className="user-comment">{review.review}</p>
+                                            {userId === review?.User?.id &&  (
+                                                <OpenModalButton
+                                                    className="Del"
+                                                    buttonText="Delete"
+                                                    buttonClassName="Delete-review"
+                                                    onButtonClick={() => setDeleteSpotId(review.id)}
+                                                    modalComponent={
+                                                        <>
+                                                            <h2 className="title-delete">Confirm Delete</h2>
+                                                            <p className="conf">Are you sure you want to delete this review?</p>
+                                                            <div className="bye">
+                                                                <button className="red-button" onClick={() => handleDelete(review.id)}>
+                                                                    Yes (Delete Review)
+                                                                </button>
+                                                                <button className="dark-grey-button" onClick={handleCancel}>
+                                                                    No (Keep Review)
+                                                                </button>
+                                                            </div>
+                                                        </>
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     );
 };
+
 
 export default SpotDetail;

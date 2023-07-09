@@ -1,8 +1,45 @@
-.post-review{
+/* Review */
+
+.post-review {
     color: white;
     background-color: gray;
     border: 2px solid black;
     box-shadow: 3px 4px 5px black;
     height: 20px;
     width: 100px
+}
+
+
+.review-date {
+    font-size: 15px
+}
+
+.review-comment {
+width: 200px;
+    height: 100px;
+    resize: none;
+}
+
+.custom-menu-item {
+    box-shadow: 5px 4px 5px black;
+    background-color: gray;
+    color: white
+}
+
+
+
+/* Star Rating */
+
+.rating-input {
+    display: flex;
+    margin-right: 4px;
+}
+
+
+.rating-input .filled {
+    color: saddlebrown;
+}
+
+.rating-input .empty {
+    color: burlywood;
 }
