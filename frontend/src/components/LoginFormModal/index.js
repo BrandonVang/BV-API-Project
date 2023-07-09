@@ -33,11 +33,12 @@ function LoginFormModal() {
         setErrors({});
     }, [credential, password]);
 
-    const handleDemoLogin = (e) => {
+    const handleDemoLogin = async (e) => {
         e.preventDefault();
         setCredential("Demo-lition");
         setPassword("password");
-        handleSubmit(e);
+        await dispatch(sessionActions.login({ credential: "Demo-lition", password: "password" }));
+        await closeModal()
     };
 
     return (
