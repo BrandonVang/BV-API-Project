@@ -15,19 +15,17 @@ const ReviewDetails = ({ spotId }) => {
     const [submitted, setSubmitted] = useState(false);
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        // Perform the logic to submit the review to the specified spot ID
+        e.preventDefault();
         const reviewData = {
             review: reviewText,
             stars,
         };
-
-        dispatch(createReviews(reviewData, spotId));
-        dispatch(fetchReviews(spotId));
-
         closeModal();
+        await dispatch(createReviews(reviewData, spotId));
         setReviewText("");
         setStars(0);
+        setSubmitted(true);
+        dispatch(fetchReviews(spotId)); // Fetch the updated reviews
     };
 
     useEffect(() => {
@@ -55,11 +53,11 @@ const ReviewDetails = ({ spotId }) => {
                     rating={stars}
                     onChange={newRating => setStars(newRating)}
                 />
-                <div className= "review-sub">
 
-                <button  type="submit" disabled={reviewText.length < 10 || stars === 0}>
-                    Submit Your Review
-                </button>
+                <div className="review-sub">
+                    <button type="submit" disabled={reviewText.length < 10 || stars === 0}>
+                        Submit Your Review
+                    </button>
                 </div>
             </form>
         </div>

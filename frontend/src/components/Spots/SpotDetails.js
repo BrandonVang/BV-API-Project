@@ -20,7 +20,11 @@ const SpotDetail = ({ match }) => {
     const { closeModal } = useModal();
     const [isLoading, setIsLoading] = useState(true);
     const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+    const [reviewCount, setReviewCount] = useState(0);
 
+    const updateReviewCount = () => {
+        setReviewCount(numReviews + 1);
+    };
 
     const handleCancel = () => {
         closeModal();
@@ -31,10 +35,13 @@ const SpotDetail = ({ match }) => {
             await dispatch(deleteReviews(parseInt(reviewId)));
             setDeleteSpotId(null);
             closeModal();
+            setReviewCount(numReviews - 1); // Update the review count by subtracting 1
         } catch (error) {
             console.error("Error deleting spot:", error);
         }
     };
+
+
 
     useEffect(() => {
         setIsLoading(true); // Set loading state to true before fetching data
@@ -163,8 +170,7 @@ const SpotDetail = ({ match }) => {
 
                 <div className="place-review">
                     <i className="fa fa-star"></i>
-                    {formattedRating} {numReviews !== 0 && `· ${numReviews} ${numReviews === 1 && 0 ? "Review" : "Reviews"}`}
-
+                    {formattedRating} {numReviews !== 0 && `· ${Object.keys(reviews).length} ${numReviews === 1 ? "Review" : "Reviews"}`}
                     <div>
                         {user !== null && (
                             <>
@@ -172,7 +178,7 @@ const SpotDetail = ({ match }) => {
                                     <OpenModalMenuItem
                                         itemText="Post Your Review"
                                         className="custom-menu-item"
-                                        modalComponent={<ReviewDetails spotId={spotId} />}
+                                        modalComponent={<ReviewDetails spotId={spotId} updateReviewCount={updateReviewCount} />}
                                     />
                                 )}
                             </>
@@ -181,43 +187,45 @@ const SpotDetail = ({ match }) => {
                             {Object.values(reviews).length === 0 && userId !== undefined && ownerId !== undefined && userId !== ownerId ? (
                                 <p className="no-reviews-text">Be the first to post a review!</p>
                             ) : (
-                                Object.values(reviews).map((review, index) => {
-                                    const reviewDate = review.createdAt ? new Date(review.createdAt) : null;
-                                    const monthYear = reviewDate ? reviewDate.toLocaleString('en-US', {
-                                        month: 'long',
-                                        year: 'numeric',
-                                    }) : '';
+                                Object.values(reviews)
+                                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) // Sort reviews by creation date in descending order
+                                    .map((review, index) => {
+                                        const reviewDate = review.createdAt ? new Date(review.createdAt) : null;
+                                        const monthYear = reviewDate ? reviewDate.toLocaleString('en-US', {
+                                            month: 'long',
+                                            year: 'numeric',
+                                        }) : '';
 
-                                    return (
-                                        <div key={`${review.id}-${index}`} className="review-item">
-                                            <p>{review?.User?.firstName} {review?.User?.lastName}</p>
-                                            <p className="review-date">{monthYear}</p>
-                                            <p className="user-comment">{review.review}</p>
-                                            {userId === review?.User?.id &&  (
-                                                <OpenModalButton
-                                                    className="Del"
-                                                    buttonText="Delete"
-                                                    buttonClassName="Delete-review"
-                                                    onButtonClick={() => setDeleteSpotId(review.id)}
-                                                    modalComponent={
-                                                        <>
-                                                            <h2 className="title-delete">Confirm Delete</h2>
-                                                            <p className="conf">Are you sure you want to delete this review?</p>
-                                                            <div className="bye">
-                                                                <button className="red-button" onClick={() => handleDelete(review.id)}>
-                                                                    Yes (Delete Review)
-                                                                </button>
-                                                                <button className="dark-grey-button" onClick={handleCancel}>
-                                                                    No (Keep Review)
-                                                                </button>
-                                                            </div>
-                                                        </>
-                                                    }
-                                                />
-                                            )}
-                                        </div>
-                                    );
-                                })
+                                        return (
+                                            <div key={`${review.id}-${index}`} className="review-item">
+                                                <p>{review?.User?.firstName} {review?.User?.lastName}</p>
+                                                <p className="review-date">{monthYear}</p>
+                                                <p className="user-comment">{review.review}</p>
+                                                {userId === review?.User?.id && (
+                                                    <OpenModalButton
+                                                        className="Del"
+                                                        buttonText="Delete"
+                                                        buttonClassName="Delete-review"
+                                                        onButtonClick={() => setDeleteSpotId(review.id)}
+                                                        modalComponent={
+                                                            <>
+                                                                <h2 className="title-delete">Confirm Delete</h2>
+                                                                <p className="conf">Are you sure you want to delete this review?</p>
+                                                                <div className="bye">
+                                                                    <button className="red-button" onClick={() => handleDelete(review.id)}>
+                                                                        Yes (Delete Review)
+                                                                    </button>
+                                                                    <button className="dark-grey-button" onClick={handleCancel}>
+                                                                        No (Keep Review)
+                                                                    </button>
+                                                                </div>
+                                                            </>
+                                                        }
+                                                    />
+                                                )}
+                                            </div>
+                                        );
+                                    })
                             )}
                         </div>
                     </div>
