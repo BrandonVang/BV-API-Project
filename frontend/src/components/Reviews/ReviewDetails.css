@@ -15,9 +15,11 @@
 }
 
 .review-comment {
-width: 200px;
+    width: 200px;
     height: 100px;
+    margin-left: 10px;
     resize: none;
+    margin-right: 10px;
 }
 
 .custom-menu-item {
@@ -30,9 +32,15 @@ width: 200px;
 
 /* Star Rating */
 
+.review-box-title {
+    display: flex;
+    justify-content: center;
+}
+
 .rating-input {
     display: flex;
     margin-right: 4px;
+    justify-content: center;
 }
 
 
@@ -42,4 +50,15 @@ width: 200px;
 
 .rating-input .empty {
     color: burlywood;
+}
+
+.review-sub {
+    display: flex;
+    justify-content: center;
+
+}
+
+.review-sub button {
+    background-color: red;
+    color: white;
 }

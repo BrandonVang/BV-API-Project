@@ -171,7 +171,9 @@ const initialState = {
 
     singleSpot: {
 
-    }
+    },
+    orderedSpots: []
+
 }
 
 /** The spots reducer */
@@ -208,7 +210,24 @@ const spotsReducer = (state = initialState, action) => {
                 singleSpot: {},
             };
         case CREATE_SPOT:
-            return { ...state, singleSpot: action.spot }
+        case ADD_SPOT_IMAGE: {
+            const newState = { ...state };
+            const { spotId, url } = action;
+
+            // Update the preview image for the spot in allSpots
+            newState.allSpots = { ...newState.allSpots };
+            newState.allSpots[spotId] = { ...newState.allSpots[spotId], previewImage: url };
+
+            // Update the preview image for the spot in orderedSpots (if applicable)
+            newState.orderedSpots = [...newState.orderedSpots];
+            const spotIndex = newState.orderedSpots.findIndex((spot) => spot.id === spotId);
+            if (spotIndex !== -1) {
+                newState.orderedSpots[spotIndex] = { ...newState.orderedSpots[spotIndex], previewImage: url };
+            }
+
+            return newState;
+        }
+
         default:
             return state;
     }

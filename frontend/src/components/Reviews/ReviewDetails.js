@@ -24,7 +24,7 @@ const ReviewDetails = ({ spotId }) => {
 
         dispatch(createReviews(reviewData, spotId));
         dispatch(fetchReviews(spotId));
-     
+
         closeModal();
         setReviewText("");
         setStars(0);
@@ -55,10 +55,12 @@ const ReviewDetails = ({ spotId }) => {
                     rating={stars}
                     onChange={newRating => setStars(newRating)}
                 />
+                <div className= "review-sub">
 
-                <button type="submit" disabled={reviewText.length < 10 || stars === 0}>
+                <button  type="submit" disabled={reviewText.length < 10 || stars === 0}>
                     Submit Your Review
                 </button>
+                </div>
             </form>
         </div>
     );

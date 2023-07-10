@@ -16,10 +16,12 @@
 .manage-container {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
+
 .manage-spots>.manage-container>div {
-    flex-basis: calc(33.33% - 10px);
+    flex-basis: calc(20% - 10px);
     margin-bottom: 20px;
 }
 
