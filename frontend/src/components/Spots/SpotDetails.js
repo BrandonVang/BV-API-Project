@@ -160,7 +160,7 @@ const SpotDetail = ({ match }) => {
                         </div>
                         <div className="review">
                             <i className="fa fa-star"></i>
-                            {formattedRating} {numReviews !== 0 && `· ${numReviews} ${numReviews === 1 && 0 ? "Review" : "Reviews"}`}
+                            {formattedRating} {numReviews !== 0 && `· ${Object.keys(reviews).length} ${numReviews === 1 ? "Review" : "Reviews"}`}
                         </div>
                     </div>
                     <button className="reserve" onClick={handleReserveClick}>
