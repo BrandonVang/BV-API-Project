@@ -22,6 +22,10 @@ const SpotDetail = ({ match }) => {
     const [isImagesLoaded, setIsImagesLoaded] = useState(false);
     const [reviewCount, setReviewCount] = useState(0);
 
+
+
+
+
     const updateReviewCount = () => {
         setReviewCount(numReviews + 1);
     };
@@ -40,6 +44,8 @@ const SpotDetail = ({ match }) => {
             console.error("Error deleting spot:", error);
         }
     };
+
+
 
 
 
@@ -79,9 +85,13 @@ const SpotDetail = ({ match }) => {
 
     const { name, city, state, country, SpotImages = [], description, price, Owner, avgStarRating, numReviews, ownerId } = spot;
     const ownerName = Owner ? `${Owner.firstName} ${Owner.lastName}` : 'Unknown';
-    const formattedRating = spot.avgStarRating !== undefined && spot.avgStarRating !== null && spot.avgStarRating !== 0
-        ? spot.avgStarRating
+    const formattedRating = avgStarRating !== undefined && avgStarRating !== null && avgStarRating !== 0
+        ? avgStarRating.toFixed(2)
         : 'New';
+
+
+
+
 
     let previewImage;
     let renderedImages = [];
@@ -160,7 +170,7 @@ const SpotDetail = ({ match }) => {
                         </div>
                         <div className="review">
                             <i className="fa fa-star"></i>
-                            {formattedRating} {numReviews !== 0 && `· ${Object.keys(reviews).length} ${numReviews === 1 ? "Review" : "Reviews"}`}
+                            {formattedRating} {Object.keys(reviews).length !== 0 ? `· ${Object.keys(reviews).length} ${Object.keys(reviews).length === 1 ? "Review" : "Reviews"}` : ''}
                         </div>
                     </div>
                     <button className="reserve" onClick={handleReserveClick}>
@@ -170,7 +180,7 @@ const SpotDetail = ({ match }) => {
 
                 <div className="place-review">
                     <i className="fa fa-star"></i>
-                    {formattedRating} {numReviews !== 0 && `· ${Object.keys(reviews).length} ${numReviews === 1 ? "Review" : "Reviews"}`}
+                    {formattedRating} {Object.keys(reviews).length !== 0 ? `· ${Object.keys(reviews).length} ${Object.keys(reviews).length === 1 ? "Review" : "Reviews"}` : ''}
                     <div>
                         {user !== null && (
                             <>
