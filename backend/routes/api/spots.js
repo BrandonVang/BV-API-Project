@@ -282,10 +282,19 @@ router.post('/:spotId/images', async (req, res) => {
 
         const { url, preview } = req.body;
 
+        // Check if there is an existing preview image for the spot
+        const existingPreviewImage = await SpotImage.findOne({
+            where: {
+                spotId: spot.id,
+                preview: true
+            }
+        });
+
+        // Create a new spot image
         const spotImage = await SpotImage.create({
             spotId: spot.id,
             url,
-            preview,
+            preview: existingPreviewImage ? false : preview, // Set to false if existing preview image exists
         });
 
         res.status(200).json({
@@ -294,10 +303,11 @@ router.post('/:spotId/images', async (req, res) => {
             preview: spotImage.preview,
         });
     } catch (error) {
-        throw error
+        console.error(error);
+        res.status(500).json({ message: "An error occurred while adding an image to the spot" });
     }
-
 });
+
 
 // GET details of a Spot from an id
 router.get('/:spotId', async (req, res) => {

@@ -20,7 +20,7 @@ module.exports = {
       },
       {
         spotId: 2,
-        url: 'https://a0.muscache.com/im/pictures/prohost-api/Hosting-898622005542393497/original/f9c54b91-bfb8-4116-bcbd-550cbee5c5db.jpeg?im_w=720',
+        url: 'https://a0.muscache.com/im/pictures/miso/Hosting-50944616/original/174f22d1-fe22-422d-91a3-d8d8e68418b9.jpeg?im_w=1200',
         preview: true,
         createdAt: new Date(),
         updatedAt: new Date(),
